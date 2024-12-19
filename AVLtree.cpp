@@ -1,5 +1,6 @@
 // AVLtree.cpp
 #include "AVLTree.h"
+template <typename T>
 
 Node::Node(T val) : key(val), left(nullptr), right(nullptr), height(1) {}
 
@@ -23,21 +24,21 @@ int AVLTree::getBalanceFactor(Node<T> *node) {
     return -(getHeight(node->right));
 }
 
-Node *AVLTree::smallestNode(Node<T> *node) {
-    Node *curr = node;
+Node<T> *nodeAVLTree::smallestNode(Node<T> *node) {
+    Node<T> *nodecurr = node;
     while (curr->left != nullptr) {
         curr = curr->left;
     }
     return curr;
 }
 
-Node *AVLTree::LLrotation(Node<T> *node) { //after insertion
+Node<T> *nodeAVLTree::LLrotation(Node<T> *node) { //after insertion
     if (node == nullptr) {
         return node;
     }
     //rotation
-    Node *A = node->left;
-    Node *Ar = A->right;
+    Node<T> *nodeA = node->left;
+    Node<T> *nodeAr = A->right;
     A->right = node;
     node->left = Ar;
     //A is now root
@@ -49,10 +50,10 @@ Node *AVLTree::LLrotation(Node<T> *node) { //after insertion
 }
 
 
-Node *AVLTree::RRrotation(Node<T> *node) {
+Node<T> *nodeAVLTree::RRrotation(Node<T> *node) {
 
-    Node *B = node->right;
-    Node *Ar = B->left;
+    Node<T> *nodeB = node->right;
+    Node<T> *nodeAr = B->left;
     B->left = node;
     node->right = Ar;
     //B became the root
@@ -64,10 +65,10 @@ Node *AVLTree::RRrotation(Node<T> *node) {
     return B;
 }
 
-Node *AVLTree::LRrotation(Node<T> *node) {
+Node<T> *nodeAVLTree::LRrotation(Node<T> *node) {
     //first we rotate the left size to the left(RR) then we rotate the root with the new root from the rotation right(LL)
-    Node *B = RRrotation(node->left);
-    Node *base = LLrotation(B);
+    Node<T> *nodeB = RRrotation(node->left);
+    Node<T> *nodebase = LLrotation(B);
     //base is now the new root
     B->height = max(getHeight(B->left), getHeight(B->right)) + 1;
     base->height = max(getHeight(base->left), getHeight(base->right)) + 1;
@@ -75,10 +76,10 @@ Node *AVLTree::LRrotation(Node<T> *node) {
     return base;
 }
 
-Node *AVLTree::RLrotation(Node<T> *node) {
+Node<T> *nodeAVLTree::RLrotation(Node<T> *node) {
     //first we rotate the right size to the right(LL) then we rotate the root with the new root from the rotation left(RR)
-    Node *B = LLrotation(node->right);
-    Node *base = RRrotation(B);
+    Node<T> *nodeB = LLrotation(node->right);
+    Node<T> *nodebase = RRrotation(B);
     //base is now the new root
     B->height = max(getHeight(B->left), getHeight(B->right)) + 1;
     base->height = max(getHeight(base->left), getHeight(base->right)) + 1;
@@ -87,7 +88,7 @@ Node *AVLTree::RLrotation(Node<T> *node) {
 
 }
 
-Node *
+Node<T> *node
 AVLTree::insert(Node<T> *node,
                 int key) {//only if horse isn't already in tree, recursive function
     if (node == nullptr) {
@@ -126,7 +127,7 @@ AVLTree::insert(Node<T> *node,
 }
 
 
-Node *AVLTree::remove(Node *root, int key) {
+Node<T> *nodeAVLTree::remove(Node<T> *noderoot, int key) {
     if (!root) { return root; }
 
     if (key < root->key) {
@@ -135,14 +136,14 @@ Node *AVLTree::remove(Node *root, int key) {
         root->right = remove(root->right, key);
     } else {
         if (!root->left || !root->right) {
-            Node *temp = root->left ? root->left : root->right;
+            Node<T> *nodetemp = root->left ? root->left : root->right;
             if (!temp) {
                 return nullptr;
             } else {
                 *root = *temp;
             }
         } else {
-            Node *temp = smallestNode(root->right);
+            Node<T> *nodetemp = smallestNode(root->right);
             root->key = temp->key;
             root->right = remove(root->right, temp->key);
         }
