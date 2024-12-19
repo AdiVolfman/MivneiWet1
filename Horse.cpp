@@ -5,8 +5,8 @@
 #include "Horse.h"
 #define NO_HERD -1
 
-Horse::Horse(unsigned int id, int speed) : m_id(id), m_speed(speed), m_leader(nullptr),
-m_herd(NO_HERD), m_followers(std::make_shared<Followers>(m_id)){
+Horse::Horse(unsigned int id, int speed) : m_id(id), m_speed(speed),
+m_leader(nullptr),m_herd(nullptr), m_followers(nullptr){
 }
 
 unsigned int Horse::getId() const {
@@ -17,6 +17,10 @@ int Horse::getSpeed() const {
     return m_speed;
 }
 
+void Horse::setHerd(Herd* newHerd) {
+    m_herd=newHerd;
+}
+
 void Horse::setLeader(Horse* leader) {
      m_leader=leader;
 }
@@ -25,8 +29,22 @@ Horse *Horse::getLeader() const {
     return m_leader;
 }
 
+void Horse::leave_herd(int horseId) {
+    m_followers.reset();
+    Horse::setFollowers();
+    m_herd=nullptr;
+    m_leader=nullptr;
+
+}
+
+
 void Horse::setFollowers() {
-    m_followers=std::make_shared<Followers>(m_id);
+    try {
+        m_followers = std::make_shared<Followers>(m_id);
+    } catch (const std::bad_alloc) {
+        m_followers.reset();
+        throw;
+    }
 }
 
 

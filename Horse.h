@@ -6,6 +6,7 @@
 #ifndef HORSE_H
 #define HORSE_H
 #include "Followers.h"
+#include "Herd.h"
 #include <memory>
 
 class Horse {
@@ -13,7 +14,7 @@ private:
     unsigned int m_id;
     int m_speed;
     Horse* m_leader;
-    int m_herd;
+    Herd* m_herd;
     std::shared_ptr<Followers> m_followers;
 
 
@@ -27,7 +28,11 @@ public:
 
     void setLeader(Horse* leader);
 
+    void setHerd(Herd* newHerd);
+
     Horse* getLeader() const;
+
+    void leave_herd(int horseId);
 
     void setFollowers();
 
