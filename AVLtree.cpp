@@ -6,11 +6,21 @@ Node::Node(int val) : key(val), left(nullptr), right(nullptr), height(1) {}
 AVLTree::AVLTree() : root(nullptr) {}
 
 int AVLTree::getHeight(Node *node) {
-    return node ? node->height : 0;
+    if (node == nullptr) {
+        return 0;
+    }
+    return node->height;
 }
 
-int AVLTree::getBalance(Node *node) {
-    return node ? getHeight(node->left) - getHeight(node->right) : 0;
+int AVLTree::getBalanceFactor(Node *node) {
+    if (node == nullptr) { return 0; }
+    if (node->left != nullptr) {
+        if (node->right != nullptr) {
+            return (getHeight(node->left) - getHeight(node->right));
+        }
+        return getHeight(node->left);
+    }
+    return -(getHeight(node->right));
 }
 
 Node *AVLTree::rotateRight(Node *y) {
@@ -40,6 +50,10 @@ Node *AVLTree::rotateLeft(Node *x) {
 }
 
 Node *AVLTree::insert(Node *node, int key) {
+    if (node == nullptr) {
+        Node n = Node(key);
+        return *n;
+    }
     if (!node) { return new Node(key); }
 
     if (key < node->key) {
@@ -51,14 +65,16 @@ Node *AVLTree::insert(Node *node, int key) {
     } // Duplicate keys not allowed
 
     node->height = 1 + max(getHeight(node->left), getHeight(node->right));
-    int balance = getBalance(node);
+    int balance = getBalanceFactor(node);
 
     // Balancing cases
-    if (balance > 1 && key < node->left->key)
+    if (balance > 1 && key < node->left->key) {
         return rotateRight(node);
+    }
 
-    if (balance < -1 && key > node->right->key)
+    if (balance < -1 && key > node->right->key) {
         return rotateLeft(node);
+    }
 
     if (balance > 1 && key > node->left->key) {
         node->left = rotateLeft(node->left);
@@ -73,7 +89,7 @@ Node *AVLTree::insert(Node *node, int key) {
     return node;
 }
 
-Node *AVLTree::minValueNode(Node *node) {
+Node *AVLTree::smallestNode(Node *node) {
     Node *current = node;
     while (current->left) {
         current = current->left;
@@ -81,13 +97,13 @@ Node *AVLTree::minValueNode(Node *node) {
     return current;
 }
 
-Node *AVLTree::erase(Node *root, int key) {
+Node *AVLTree::remove(Node *root, int key) {
     if (!root) { return root; }
 
     if (key < root->key) {
-        root->left = erase(root->left, key);
+        root->left = remove(root->left, key);
     } else if (key > root->key) {
-        root->right = erase(root->right, key);
+        root->right = remove(root->right, key);
     } else {
         if (!root->left || !root->right) {
             Node *temp = root->left ? root->left : root->right;
@@ -97,30 +113,30 @@ Node *AVLTree::erase(Node *root, int key) {
                 *root = *temp;
             }
         } else {
-            Node *temp = minValueNode(root->right);
+            Node *temp = smallestNode(root->right);
             root->key = temp->key;
-            root->right = erase(root->right, temp->key);
+            root->right = remove(root->right, temp->key);
         }
     }
 
     root->height = max(getHeight(root->left), getHeight(root->right)) + 1;
-    int balance = getBalance(root);
+    int balance = getBalanceFactor(root);
 
     // Balancing cases
-    if (balance > 1 && getBalance(root->left) >= 0) {
+    if (balance > 1 && getBalanceFactor(root->left) >= 0) {
         return rotateRight(root);
     }
 
-    if (balance > 1 && getBalance(root->left) < 0) {
+    if (balance > 1 && getBalanceFactor(root->left) < 0) {
         root->left = rotateLeft(root->left);
         return rotateRight(root);
     }
 
-    if (balance < -1 && getBalance(root->right) <= 0) {
+    if (balance < -1 && getBalanceFactor(root->right) <= 0) {
         return rotateLeft(root);
     }
 
-    if (balance < -1 && getBalance(root->right) > 0) {
+    if (balance < -1 && getBalanceFactor(root->right) > 0) {
         root->right = rotateRight(root->right);
         return rotateLeft(root);
     }
@@ -128,23 +144,23 @@ Node *AVLTree::erase(Node *root, int key) {
     return root;
 }
 
-bool AVLTree::search(Node *node, int key) {
+bool AVLTree::find(Node *node, int key) {
     if (!node) { return false; }
     if (node->key == key) { return true; }
-    if (key < node->key) { return search(node->left, key); }
-    return search(node->right, key);
+    if (key < node->key) { return find(node->left, key); }
+    return find(node->right, key);
 }
 
 void AVLTree::add(int key) {
     root = insert(root, key);
 }
 
-void AVLTree::erase(int key) {
-    root = erase(root, key);
+void AVLTree::remove(int key) {
+    root = remove(root, key);
 }
 
 bool AVLTree::find(int key) {
-    return search(root, key);
+    return find(root, key);
 }
 
 void AVLTree::inOrder(Node *node) {
