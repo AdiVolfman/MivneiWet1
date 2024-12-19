@@ -22,7 +22,7 @@ void Horse::setHerd(Herd* newHerd) {
 }
 
 void Horse::setLeader(Horse* leader) {
-     m_leader=leader;
+    m_leader=leader;
 }
 
 Horse *Horse::getLeader() const {
