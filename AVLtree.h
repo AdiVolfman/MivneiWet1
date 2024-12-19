@@ -9,11 +9,11 @@ using namespace std;
 template<typename T>
 struct Node {
     T key;
-    Node<T> *nodeleft;
-    Node<T> *noderight;
+    Node<T> *left;
+    Node<T> *right;
     int height;
 
-    explicit Node(int val);
+    explicit Node(T val);
 
 };
 
@@ -21,27 +21,27 @@ struct Node {
 template<typename T>
 class AVLTree {
 private:
-    Node<T> *noderoot;
+    Node<T> *root;
 
     // Helper methods
     int getHeight(Node<T> *node);
-    Node<T> *nodeinsert(Node<T> *node, int key);
-    Node<T> *noderemove(Node<T> *node, int key);
-    Node<T> *nodesmallestNode(Node<T> *node);
+    Node<T> *insert(Node<T> *node, T key);
+    Node<T> *remove(Node<T> *node, T root);
+    Node<T> *smallestNode(Node<T> *node);
     int getBalanceFactor(Node<T> *node);
-    bool find(Node<T> *node, int key);
+    bool find(Node<T> *node, T key);
     void inOrder(Node<T> *node);
-    Node<T> *nodeLLrotation(Node<T> *node);
-    Node<T> *nodeRRrotation(Node<T> *node);
-    Node<T> *nodeLRrotation(Node<T> *node);
-    Node<T> *nodeRLrotation(Node<T> *node);
+    Node<T> *LLrotation(Node<T> *node);
+    Node<T> *RRrotation(Node<T> *node);
+    Node<T> *LRrotation(Node<T> *node);
+    Node<T> *RLrotation(Node<T> *node);
 
 
 public:
     AVLTree();
-    void add(int key);
-    void remove(int key);
-    Node<T> *node find(int key);
+    int insert(T key);
+    int remove(T key);
+    Node<T> *find(T key);
     void printInOrder();
 };
 
