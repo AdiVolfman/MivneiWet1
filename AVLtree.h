@@ -11,7 +11,6 @@ struct Node {
     Node *left;
     Node *right;
     int height;
-    int balanceFactor;
 
     explicit Node(int val);
 
@@ -29,8 +28,14 @@ private:
     Node *insert(Node *node, int key);
     Node *remove(Node *node, int key);
     Node *smallestNode(Node *node);
+    int getBalanceFactor(Node *node);
     bool find(Node *node, int key);
     void inOrder(Node *node);
+    Node *LLrotation(Node *node);
+    Node *RRrotation(Node *node);
+    Node *LRrotation(Node *node);
+    Node *RLrotation(Node *node);
+
 
 public:
     AVLTree();
