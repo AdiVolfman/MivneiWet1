@@ -1,18 +1,18 @@
 // AVLtree.cpp
 #include "AVLTree.h"
 
-Node::Node(int val) : key(val), left(nullptr), right(nullptr), height(1) {}
+Node::Node(T val) : key(val), left(nullptr), right(nullptr), height(1) {}
 
 AVLTree::AVLTree() : root(nullptr) {}
 
-int AVLTree::getHeight(Node *node) {
+int AVLTree::getHeight(Node<T> *node) {
     if (node == nullptr) {
         return 0;
     }
     return node->height;
 }
 
-int AVLTree::getBalanceFactor(Node *node) {
+int AVLTree::getBalanceFactor(Node<T> *node) {
     if (node == nullptr) { return 0; }
     if (node->left != nullptr) {
         if (node->right != nullptr) {
@@ -23,7 +23,7 @@ int AVLTree::getBalanceFactor(Node *node) {
     return -(getHeight(node->right));
 }
 
-Node *AVLTree::smallestNode(Node *node) {
+Node *AVLTree::smallestNode(Node<T> *node) {
     Node *curr = node;
     while (curr->left != nullptr) {
         curr = curr->left;
@@ -31,7 +31,7 @@ Node *AVLTree::smallestNode(Node *node) {
     return curr;
 }
 
-Node *AVLTree::LLrotation(Node *node) { //after insertion
+Node *AVLTree::LLrotation(Node<T> *node) { //after insertion
     if (node == nullptr) {
         return node;
     }
@@ -49,7 +49,7 @@ Node *AVLTree::LLrotation(Node *node) { //after insertion
 }
 
 
-Node *AVLTree::RRrotation(Node *node) {
+Node *AVLTree::RRrotation(Node<T> *node) {
 
     Node *B = node->right;
     Node *Ar = B->left;
@@ -64,7 +64,7 @@ Node *AVLTree::RRrotation(Node *node) {
     return B;
 }
 
-Node *AVLTree::LRrotation(Node *node) {
+Node *AVLTree::LRrotation(Node<T> *node) {
     //first we rotate the left size to the left(RR) then we rotate the root with the new root from the rotation right(LL)
     Node *B = RRrotation(node->left);
     Node *base = LLrotation(B);
@@ -75,7 +75,7 @@ Node *AVLTree::LRrotation(Node *node) {
     return base;
 }
 
-Node *AVLTree::RLrotation(Node *node) {
+Node *AVLTree::RLrotation(Node<T> *node) {
     //first we rotate the right size to the right(LL) then we rotate the root with the new root from the rotation left(RR)
     Node *B = LLrotation(node->right);
     Node *base = RRrotation(B);
@@ -88,7 +88,7 @@ Node *AVLTree::RLrotation(Node *node) {
 }
 
 Node *
-AVLTree::insert(Node *node,
+AVLTree::insert(Node<T> *node,
                 int key) {//only if horse isn't already in tree, recursive function
     if (node == nullptr) {
         Node n = Node(key);
@@ -173,7 +173,7 @@ Node *AVLTree::remove(Node *root, int key) {
     return root;
 }
 
-bool AVLTree::find(Node *node, int key) {
+bool AVLTree::find(Node<T> *node, int key) {
     if (!node) { return false; }
     if (node->key == key) { return true; }
     if (key < node->key) { return find(node->left, key); }
@@ -192,7 +192,7 @@ bool AVLTree::find(int key) {
     return find(root, key);
 }
 
-void AVLTree::inOrder(Node *node) {
+void AVLTree::inOrder(Node<T> *node) {
     if (!node) { return; }
     inOrder(node->left);
     cout << node->key << " ";

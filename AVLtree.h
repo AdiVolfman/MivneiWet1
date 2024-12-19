@@ -6,8 +6,9 @@
 using namespace std;
 
 // Node structure
+template<typename T>
 struct Node {
-    int key;
+    T key;
     Node *left;
     Node *right;
     int height;
@@ -17,24 +18,23 @@ struct Node {
 };
 
 // AVL Tree class
+template<typename T>
 class AVLTree {
 private:
     Node *root;
 
     // Helper methods
-    int getHeight(Node *node);
-    Node *rotateRight(Node *y);
-    Node *rotateLeft(Node *x);
-    Node *insert(Node *node, int key);
-    Node *remove(Node *node, int key);
-    Node *smallestNode(Node *node);
-    int getBalanceFactor(Node *node);
-    bool find(Node *node, int key);
-    void inOrder(Node *node);
-    Node *LLrotation(Node *node);
-    Node *RRrotation(Node *node);
-    Node *LRrotation(Node *node);
-    Node *RLrotation(Node *node);
+    int getHeight(Node<T> *node);
+    Node *insert(Node<T> *node, int key);
+    Node *remove(Node<T> *node, int key);
+    Node *smallestNode(Node<T> *node);
+    int getBalanceFactor(Node<T> *node);
+    bool find(Node<T> *node, int key);
+    void inOrder(Node<T> *node);
+    Node *LLrotation(Node<T> *node);
+    Node *RRrotation(Node<T> *node);
+    Node *LRrotation(Node<T> *node);
+    Node *RLrotation(Node<T> *node);
 
 
 public:
