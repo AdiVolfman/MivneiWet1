@@ -25,16 +25,16 @@ private:
 
     // Helper methods
     int getHeight(Node<T> *node);
-    Node<T> *nodeinsert(Node<T> *node, int key);
-    Node<T> *noderemove(Node<T> *node, int key);
-    Node<T> *nodesmallestNode(Node<T> *node);
+    Node<T> *node insert(Node<T> *node, int key);
+    Node<T> *node remove(Node<T> *node, int key);
+    Node<T> *node smallestNode(Node<T> *node);
     int getBalanceFactor(Node<T> *node);
     bool find(Node<T> *node, int key);
     void inOrder(Node<T> *node);
-    Node<T> *nodeLLrotation(Node<T> *node);
-    Node<T> *nodeRRrotation(Node<T> *node);
-    Node<T> *nodeLRrotation(Node<T> *node);
-    Node<T> *nodeRLrotation(Node<T> *node);
+    Node<T> *node LLrotation(Node<T> *node);
+    Node<T> *node RRrotation(Node<T> *node);
+    Node<T> *node LRrotation(Node<T> *node);
+    Node<T> *node RLrotation(Node<T> *node);
 
 
 public:
