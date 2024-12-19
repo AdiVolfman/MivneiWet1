@@ -12,7 +12,7 @@ private:
 
 public:
 
-    Followers(unsigned int id);
+    explicit Followers(unsigned int id);
     unsigned int getHorseId() const;
 };
 

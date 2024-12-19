@@ -10,6 +10,7 @@ class Herd {
 
 private:
     unsigned int m_id;
+    int m_size;
 
     struct Node {
         Horse horse;
@@ -32,6 +33,8 @@ public:
     void addHorse( Horse& horse);
 
     void removeHorse(unsigned int horseId);
+
+    bool leads (int horseId, int otherHorseId);
 
     bool operator<(const Herd& other) const;
 

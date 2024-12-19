@@ -41,6 +41,12 @@ StatusType Plains::follow(int horseId, int horseToFollowId)
 
 StatusType Plains::leave_herd(int horseId)
 {
+    //find the horse
+    //chack if in any herd
+    //apply removeHorse at Herd
+    //remove follow from followers- apply leave_herd at Horse
+    // update at Horse class
+
     return StatusType::FAILURE;
 }
 
@@ -51,6 +57,10 @@ output_t<int> Plains::get_speed(int horseId)
 
 output_t<bool> Plains::leads(int horseId, int otherHorseId)
 {
+    //find hourse one, hourse two
+    //check if they at the same herd- else return false
+    // apply leads at the herd
+
     return false;
 }
 
