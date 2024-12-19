@@ -1,3 +1,4 @@
+
 //
 // Created by meshi on 19/12/2024.
 //
@@ -36,6 +37,4 @@ bool Horse::operator<(const Horse& other) const {
 bool Horse::operator>(const Horse& other) const {
     return m_id > other.m_id;
 }
-
-
 
