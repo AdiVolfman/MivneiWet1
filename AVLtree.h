@@ -41,7 +41,7 @@ public:
     AVLTree();
     void add(int key);
     void remove(int key);
-    bool find(int key);
+    Node<T> *node find(int key);
     void printInOrder();
 };
 
