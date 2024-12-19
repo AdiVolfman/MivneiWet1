@@ -1,17 +1,14 @@
-// AVLTree.h
 #ifndef AVLTREE_H
 #define AVLTREE_H
 
 #include <iostream>
-#include <algorithm>
-
 using namespace std;
 
 // Node structure
 struct Node {
     int key;
-    Node *left;
-    Node *right;
+    Node* left;
+    Node* right;
     int height;
 
     Node(int val);
@@ -20,18 +17,18 @@ struct Node {
 // AVL Tree class
 class AVLTree {
 private:
-    Node *root;
+    Node* root;
 
     // Helper methods
-    int getHeight(Node *node);
-    int getBalance(Node *node);
-    Node *rotateRight(Node *y);
-    Node *rotateLeft(Node *x);
-    Node *insert(Node *node, int key);
-    Node *erase(Node *node, int key);
-    Node *minValueNode(Node *node);
-    bool search(Node *node, int key);
-    void inOrder(Node *node);
+    int getHeight(Node* node);
+    int getBalance(Node* node);
+    Node* rotateRight(Node* y);
+    Node* rotateLeft(Node* x);
+    Node* insert(Node* node, int key);
+    Node* erase(Node* node, int key);
+    Node* minValueNode(Node* node);
+    bool search(Node* node, int key);
+    void inOrder(Node* node);
 
 public:
     AVLTree();
