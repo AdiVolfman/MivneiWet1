@@ -31,7 +31,7 @@ void Herd::addHorse(Horse& horse) {
 }
 
 void Herd::removeHorse(unsigned int horseId) {
-    Node* cur_node= head;
+    Node* cur_node = head;
     Node* pre_node = nullptr;
 
     while (cur_node) {
