@@ -1,5 +1,9 @@
-// AVLTree<T>.cpp
-#include "AVLTree.h"
+
+#include "AVLtree.h"
+
+#pragma once
+
+#include "StatusType.h"
 
 template<typename T>
 Node<T>::Node(T val) : key(val), left(nullptr), right(nullptr), height(1) {}
@@ -93,7 +97,13 @@ template<typename T>
 Node<T> *AVLTree<T>::insert(Node<T> *node,
                             T key) {//only if horse isn't already in tree, recursive function
     if (node == nullptr) {
-        return new Node(key);//ADD TRY AND CATCH!!!!!!!11
+        try {
+            return new Node(key); // Attempt to allocate memory
+        } catch (const std::bad_alloc &err) { // Catch allocation error
+            std::cerr << "Memory allocation failed: " << err.what()
+                      << std::endl;
+            return nullptr; // Return nullptr to indicate failure
+        }
     }
     if (key < node->key) {
         node->left = insert(node->left, key);//recursion to the left
@@ -128,72 +138,70 @@ Node<T> *AVLTree<T>::insert(Node<T> *node,
 template<typename T>
 Node<T> *
 AVLTree<T>::remove(Node<T> *node, T key) {// DONT FORGET TO DELETE ALLOCATIONS!!
-    if (node == nullptr) { return node; }
+    if (node == nullptr) { return node; }//key not found
     if (key < node->key) {
-        root->left = remove(root->left, key);
-    } else if (key > root->key) {
-        root->right = remove(root->right, key);
-    } else {
-        if (root->left == nullptr || root->right == nullptr) {
-            Node<T> *temp = root->left ? root->left : root->right;
-            if (!temp) {
-                return nullptr;
-            } else {
-                *root = *temp;
+        node->left = remove(node->left, key);//recurse to the left subtree
+    } else if (key > node->key) {
+        node->right = remove(node->right, key);//recurse to the right subtree
+    } else {//after all recursive steps, found the node to be deleted
+        if (node->left == nullptr ||
+            node->right == nullptr) {// if node has one or 0 children
+            Node<T> *child = node->left ? node->left : node->right;
+            if (child == nullptr) {// no children, removing the node
+                child = node; //later deleting ching
+            } else {// one child, swapping with child
+                *node = *child;// using operator = of generic class
             }
-        } else {
-            Node<T> *temp = smallestNode(root->right);
-            root->key = temp->key;
-            root->right = remove(root->right, temp->key);
+            delete child;//both cases;
+        } else {// node has 2 children, finiding the smallest ket on right child
+            Node<T> *smallest = smallestNode(
+                    node->right);//find the smallest leaf
+            node->key = smallest->key;//switch between nodes, skipping relations too.
+            // node->key = smallest->key;//switching between the keys
+            node->right = remove(node->right,
+                                 smallest->key);//remove the leaf
         }
     }
 
-    root->height = max(getHeight(root->left), getHeight(root->right)) + 1;
-    int balance = getBalanceFactor(root);
+//updating the height
+    node->height = max(getHeight(node->left), getHeight(node->right)) + 1;
+    int balanceFactor = getBalanceFactor(node);
 
     // Balancing cases
-    if (balance > 1 && getBalanceFactor(root->left) >= 0) {
-        return rotateRight(root);
+    if (balanceFactor > 1 && getBalanceFactor(node->left) > -1) {
+        return LLrotation(node);
+    }
+    if (balanceFactor > 1 && getBalanceFactor(node->left) < 0) {
+        return LRrotation(node);
+    }
+    if (balanceFactor < -1 && getBalanceFactor(node->right) < 1) {
+        return RRrotation(node);
+    }
+    if (balanceFactor < -1 && getBalanceFactor(node->right) > 0) {
+        return RLrotation(node);
     }
 
-    if (balance > 1 && getBalanceFactor(root->left) < 0) {
-        root->left = rotateLeft(root->left);
-        return rotateRight(root);
-    }
-
-    if (balance < -1 && getBalanceFactor(root->right) <= 0) {
-        return rotateLeft(root);
-    }
-
-    if (balance < -1 && getBalanceFactor(root->right) > 0) {
-        root->right = rotateRight(root->right);
-        return rotateLeft(root);
-    }
-
-    return root;
+    return node;
 }
 
 template<typename T>
-Node<T> *AVLTree<T>::find(Node<T> *node, T key) {
-    if (!node) { return false; }
-    if (node->key == key) { return true; }
-    if (key < node->key) { return find(node->left, key); }
-    return find(node->right, key);
+Node<T> *AVLTree<T>::find(T key) {
+    if (!this->root) { return false; }
+    if (this->root->key == key) { return true; }
+    if (key < this->root->key) {
+        return find(this->root->left, key);
+    }//searching the left part first
+    return find(this->root->right, key);
 }
 
 template<typename T>
-void AVLTree<T>::add(int key) {
-    root = insert(root, key);
+void AVLTree<T>::insert(T key) {
+    this->root = insert(this->root, key);
 }
 
 template<typename T>
-void AVLTree<T>::remove(int key) {
-    root = remove(root, key);
-}
-
-template<typename T>
-bool AVLTree<T>::find(int key) {
-    return find(root, key);
+void AVLTree<T>::remove(T key) {
+    this->root = remove(this->root, key);
 }
 
 template<typename T>
@@ -206,6 +214,6 @@ void AVLTree<T>::inOrder(Node<T> *node) {
 
 template<typename T>
 void AVLTree<T>::printInOrder() {
-    inOrder(root);
+    inOrder(this->root);
     cout << endl;
 }
