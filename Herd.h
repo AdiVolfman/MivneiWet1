@@ -17,7 +17,7 @@ private:
         Node* next;
         Node( std::shared_ptr<Horse> horse, Node* next = nullptr) : horse(horse),
         next(next) {}
-     };
+    };
 
     Node* head;
     Node* tail;
@@ -37,9 +37,14 @@ public:
 
     bool leads (int horseId, int otherHorseId);
 
+    bool can_run_together () const;
+
     bool operator<(const Herd& other) const;
 
     bool operator>(const Herd& other) const;
+
+    Herd& operator=(const Herd& other);
+
 };
 
 #endif //HERD_H

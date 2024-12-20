@@ -5,11 +5,10 @@
 #include "Horse.h"
 #define START_KEY -1
 
-#include "Horse.h"
-#define START_KEY -1
-
 Horse::Horse(unsigned int id, int speed)
     : m_id(id), m_speed(speed), m_herd(nullptr), m_key(START_KEY), m_leaderKey(START_KEY) {}
+
+int Horse::keyCounter = START_KEY;
 
 unsigned int Horse::getId() const {
     return m_id;
@@ -40,18 +39,9 @@ int Horse::getKey() const {
 }
 
 void Horse::setKey() {
-    if (m_herd == nullptr) {
-      throw std::runtime_error("");
-    }
-    m_key = m_herd->getId();
-    int id = m_id;
-    int num = 0;
-    while (id > 0) {
-        num = id % 10;
-        id = id / 10;
-        m_key = m_key * 10;
-        m_key += num;
-    }
+
+    m_key = keyCounter;
+    keyCounter++;
 }
 
 int Horse::getLeaderKey() const {
@@ -91,13 +81,20 @@ bool Horse::operator>(const Horse& other) const {
     return m_id > other.m_id;
 }
 
-bool Horse::follow(const std::shared_ptr<Horse> &other) {
+bool Horse::isFollow(const std::shared_ptr<Horse> &other) {
     if (m_leader.lock()==other &&
         m_leader.lock()->getLeaderKey() == other->getKey()) {
         return true;
     }
     return false;
 }
+
+void Horse::follow(const std::shared_ptr<Horse> &other) {
+    m_leader.lock()=other;
+    m_leader.lock()->setLeaderKey(other->getKey());
+
+}
+
 
 Horse& Horse::operator=(const Horse& other) {
     if (this != &other) {
