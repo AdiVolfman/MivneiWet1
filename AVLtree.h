@@ -26,7 +26,7 @@ private:
     // Helper methods
     int getHeight(Node<T> *node);
     Node<T> *insert(Node<T> *node, T key);
-    Node<T> *remove(Node<T> *node, T root);
+    Node<T> *remove(Node<T> *node, T key);
     Node<T> *smallestNode(Node<T> *node);
     int getBalanceFactor(Node<T> *node);
     bool find(Node<T> *node, T key);

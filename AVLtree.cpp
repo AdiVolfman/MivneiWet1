@@ -1,33 +1,37 @@
 // AVLTree<T>.cpp
 #include "AVLTree.h"
-template <typename T>
+
+template<typename T>
 Node<T>::Node(T val) : key(val), left(nullptr), right(nullptr), height(1) {}
 
-template <typename T>
- AVLTree<T>::AVLTree() : root(nullptr) {}
+template<typename T>
+AVLTree<T>::AVLTree() : root(nullptr) {}
 
-template <typename T>
+template<typename T>
 int AVLTree<T>::getHeight(Node<T> *node) {
     if (node == nullptr) {
         return 0;
     }
     return node->height;
 }
-template <typename T>
+
+template<typename T>
 int AVLTree<T>::getBalanceFactor(Node<T> *node) {
     if (node == nullptr) { return 0; }
     return getHeight(node->left) - getHeight(node->right);
 }
-template <typename T>
-Node<T> * AVLTree<T>::smallestNode(Node<T> *node) {
+
+template<typename T>
+Node<T> *AVLTree<T>::smallestNode(Node<T> *node) {
     Node<T> *curr = node;
     while (curr->left != nullptr) {
         curr = curr->left;
     }
     return curr;
 }
-template <typename T>
-Node<T> * AVLTree<T>::LLrotation(Node<T> *node) { //after insertion
+
+template<typename T>
+Node<T> *AVLTree<T>::LLrotation(Node<T> *node) { //after insertion
     if (node == nullptr) {
         return node;
     }
@@ -44,8 +48,8 @@ Node<T> * AVLTree<T>::LLrotation(Node<T> *node) { //after insertion
     return A;//returning the new root
 }
 
-template <typename T>
-Node<T> * AVLTree<T>::RRrotation(Node<T> *node) {
+template<typename T>
+Node<T> *AVLTree<T>::RRrotation(Node<T> *node) {
 
     Node<T> *B = node->right;
     Node<T> *Ar = B->left;
@@ -59,7 +63,8 @@ Node<T> * AVLTree<T>::RRrotation(Node<T> *node) {
 
     return B;
 }
-template <typename T>
+
+template<typename T>
 Node<T> *AVLTree<T>::LRrotation(Node<T> *node) {
     //first we rotate the left size to the left(RR) then we rotate the root with the new root from the rotation right(LL)
     Node<T> *B = RRrotation(node->left);
@@ -70,7 +75,8 @@ Node<T> *AVLTree<T>::LRrotation(Node<T> *node) {
     //height updated
     return base;
 }
-template <typename T>
+
+template<typename T>
 Node<T> *AVLTree<T>::RLrotation(Node<T> *node) {
     //first we rotate the right size to the right(LL) then we rotate the root with the new root from the rotation left(RR)
     Node<T> *B = LLrotation(node->right);
@@ -82,22 +88,21 @@ Node<T> *AVLTree<T>::RLrotation(Node<T> *node) {
     return base;
 
 }
-template <typename T>
+
+template<typename T>
 Node<T> *AVLTree<T>::insert(Node<T> *node,
-                T key) {//only if horse isn't already in tree, recursive function
+                            T key) {//only if horse isn't already in tree, recursive function
     if (node == nullptr) {
-        Node n = Node(key);
-        return &n;
+        return new Node(key);//ADD TRY AND CATCH!!!!!!!11
     }
-    if (!node) { return new Node(key); }
     if (key < node->key) {
-        node->left = insert(node->left, key);
+        node->left = insert(node->left, key);//recursion to the left
     } else if (key > node->key) {
-        node->right = insert(node->right, key);
+        node->right = insert(node->right, key);//recursion to the right
     } else {
         return node;
     }
-
+//updating the height
     node->height = 1 + max(getHeight(node->left), getHeight(node->right));
     int balanceFactor = getBalanceFactor(node);
 
@@ -120,15 +125,16 @@ Node<T> *AVLTree<T>::insert(Node<T> *node,
     return node;
 }
 
-template <typename T>
-Node<T> * AVLTree<T>::remove(Node<T> *node root, T key) {
-    if (!root) { return root; }
+template<typename T>
+Node<T> *
+AVLTree<T>::remove(Node<T> *node, T key) {// DONT FORGET TO DELETE ALLOCATIONS!!
+    if (node == nullptr) { return node; }
     if (key < node->key) {
         root->left = remove(root->left, key);
     } else if (key > root->key) {
         root->right = remove(root->right, key);
     } else {
-        if (!root->left || !root->right) {
+        if (root->left == nullptr || root->right == nullptr) {
             Node<T> *temp = root->left ? root->left : root->right;
             if (!temp) {
                 return nullptr;
@@ -166,33 +172,39 @@ Node<T> * AVLTree<T>::remove(Node<T> *node root, T key) {
 
     return root;
 }
-template <typename T>
-Node<T> * AVLTree<T>::find(Node<T> *node, T key) {
+
+template<typename T>
+Node<T> *AVLTree<T>::find(Node<T> *node, T key) {
     if (!node) { return false; }
     if (node->key == key) { return true; }
     if (key < node->key) { return find(node->left, key); }
     return find(node->right, key);
 }
-template <typename T>
+
+template<typename T>
 void AVLTree<T>::add(int key) {
     root = insert(root, key);
 }
-template <typename T>
+
+template<typename T>
 void AVLTree<T>::remove(int key) {
     root = remove(root, key);
 }
-template <typename T>
+
+template<typename T>
 bool AVLTree<T>::find(int key) {
     return find(root, key);
 }
-template <typename T>
+
+template<typename T>
 void AVLTree<T>::inOrder(Node<T> *node) {
     if (!node) { return; }
     inOrder(node->left);
     cout << node->key << " ";
     inOrder(node->right);
 }
-template <typename T>
+
+template<typename T>
 void AVLTree<T>::printInOrder() {
     inOrder(root);
     cout << endl;
