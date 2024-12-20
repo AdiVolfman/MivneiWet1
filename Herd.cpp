@@ -57,36 +57,63 @@ bool Herd::leads (int horseId, int otherHorseId) {
 
     bool found=false;
     Node* cur_node = head;
-    Node *first;
-    Node *second;
+    Node *first=nullptr;
+    Node *second=nullptr;
 
-    for (int i = 0; i < m_size; i++) {
-        if ( horseId == cur_node->horse->getId()) {
-            first->horse = cur_node->horse;
-            break;
+    while (cur_node) {
+        if (cur_node->horse->getId() == horseId) {
+            first = cur_node;
         }
-        cur_node = cur_node->next;
-    }
-    for (int i = 0; i < m_size; i++) {
-        if ( otherHorseId == cur_node->horse->getId()) {
-            second->horse = cur_node->horse;
-            break;
+        if (cur_node->horse->getId() == otherHorseId) {
+            second = cur_node;
         }
         cur_node = cur_node->next;
     }
 
-    Node *curHorse = first;
-    Node* next;
+    cur_node = first;
 
-    for (int i = 0; i < m_size; i++) {
-        if(curHorse->horse->follow(next->horse)) {
+    while (cur_node) {
+        if(cur_node->horse->isFollow(second->horse)) {
             found=true;
             break;
         }
-        curHorse=next;
+        cur_node=cur_node->next;
     }
     return found;
 }
+
+bool Herd::can_run_together() const {
+
+    Node* cur_node = head;
+    Node* root=nullptr;
+
+    while (cur_node) {
+        std::shared_ptr<Horse> isLeader =
+            cur_node->horse->getLeader().lock();
+
+        if(!cur_node->horse->isFollow(isLeader)) {
+            root=cur_node;
+            break;
+        }
+        cur_node = cur_node->next;
+    }
+
+    if(!root) {
+        return false;}
+
+    cur_node=head;
+    while (cur_node) {
+        if(cur_node!=root) {
+            if(!leads(cur_node->horse->getId(),
+                root->horse->getHerd())) {
+                return false;
+            }
+        }
+        cur_node = cur_node->next;
+    }
+    return true;
+}
+
 
 bool Herd::operator<(const Herd& other) const {
     return m_id < other.m_id;
@@ -95,3 +122,29 @@ bool Herd::operator<(const Herd& other) const {
 bool Herd::operator>(const Herd& other) const {
     return m_id > other.m_id;
 }
+
+Herd& Herd::operator=(const Herd& other) {
+    if (this == &other) {
+        return *this;
+    }
+
+    m_id = other.m_id;
+
+    while (head) {
+        Node* cur_node = head;
+        head = head->next;
+        delete cur_node;
+    }
+
+    tail = nullptr;
+    m_size = SIZE0;
+
+    Node* cur_other = other.head;
+    while (cur_other) {
+        addHorse(cur_other->horse); // Reuse the addHorse method
+        cur_other = cur_other->next;
+    }
+
+    return *this;
+}
+

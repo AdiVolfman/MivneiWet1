@@ -31,11 +31,22 @@ StatusType Plains::add_horse(int horseId, int speed)
 
 StatusType Plains::join_herd(int horseId, int herdId)
 {
+    //find horse
+    //Check if m_key =START
+    //If so, the horse is not in any herd
+    //find herd- Check if the herd exists?
+    //apply add_horse at herd
+    //add line: horse->join_herd(this);
+
     return StatusType::FAILURE;
 }
 
 StatusType Plains::follow(int horseId, int horseToFollowId)
 {
+    //find 2 horses
+    //chack they are at same herd
+    //apply follow(horse2) at horse1
+
     return StatusType::FAILURE;
 }
 
@@ -52,6 +63,8 @@ StatusType Plains::leave_herd(int horseId)
 
 output_t<int> Plains::get_speed(int horseId)
 {
+    //apply get speed
+
     return 0;
 }
 
@@ -66,5 +79,8 @@ output_t<bool> Plains::leads(int horseId, int otherHorseId)
 
 output_t<bool> Plains::can_run_together(int herdId)
 {
+    //find herd
+    //apply can_run_together at herd
+
     return false;
 }

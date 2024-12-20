@@ -8,6 +8,7 @@
 #include "Herd.h"
 #include <memory>
 
+
 class Horse {
 private:
     unsigned int m_id;
@@ -16,6 +17,7 @@ private:
     Herd* m_herd;
     int m_key;
     int m_leaderKey;
+    static int keyCounter ;
 
 
 public:
@@ -44,9 +46,11 @@ public:
 
     void leave_herd();
 
-    bool follow (const std::shared_ptr<Horse> &other);
+    bool isFollow (const std::shared_ptr<Horse> &other);
 
     void join_herd(Herd* newHerd);
+
+    void follow (const std::shared_ptr<Horse> &other);
 
     bool operator<(const Horse& other) const;
 
