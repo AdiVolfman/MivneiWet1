@@ -68,8 +68,9 @@ void Horse::leave_herd() {
     }
 
     m_leaderKey = START_KEY;
-    m_leader.reset();
     m_key = START_KEY;
+    m_leader.reset();
+    m_herd=nullptr;
 }
 
 
