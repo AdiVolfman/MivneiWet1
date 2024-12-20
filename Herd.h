@@ -5,7 +5,7 @@
 #ifndef HERD_H
 #define HERD_H
 #include "Horse.h"
-
+#include <memory>
 class Herd {
 
 private:
@@ -13,9 +13,10 @@ private:
     int m_size;
 
     struct Node {
-        Horse horse;
+        std::shared_ptr<Horse> horse;
         Node* next;
-        Node( Horse& horse, Node* next = nullptr) : horse(horse), next(next) {}
+        Node( std::shared_ptr<Horse> horse, Node* next = nullptr) : horse(horse),
+        next(next) {}
      };
 
     Node* head;
@@ -30,7 +31,7 @@ public:
 
     unsigned int getId() const;
 
-    void addHorse( Horse& horse);
+    void addHorse(std::shared_ptr<Horse> &horse);
 
     void removeHorse(unsigned int horseId);
 

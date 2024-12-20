@@ -5,7 +5,6 @@
 
 #ifndef HORSE_H
 #define HORSE_H
-#include "Followers.h"
 #include "Herd.h"
 #include <memory>
 
@@ -13,9 +12,10 @@ class Horse {
 private:
     unsigned int m_id;
     int m_speed;
-    Horse* m_leader;
+    std::weak_ptr<Horse> m_leader;
     Herd* m_herd;
-    std::shared_ptr<Followers> m_followers;
+    int m_key;
+    int m_leaderKey;
 
 
 public:
@@ -26,19 +26,33 @@ public:
 
     int getSpeed() const;
 
-    void setLeader(Horse* leader);
+    void setLeader(const std::weak_ptr<Horse> &leader);
 
-    void setHerd(Herd* newHerd);
+    void setHerd( Herd* newHerd);
 
-    Horse* getLeader() const;
+    const std::weak_ptr<Horse> getLeader() const;
 
-    void leave_herd(int horseId);
+    const Herd* getHerd() const;
 
-    void setFollowers();
+    int getKey() const;
+
+    int getLeaderKey() const;
+
+    void setKey();
+
+    void setLeaderKey(int leaderId);
+
+    void leave_herd();
+
+    bool follow (const std::shared_ptr<Horse> &other);
+
+    void join_herd(Herd* newHerd);
 
     bool operator<(const Horse& other) const;
 
     bool operator>(const Horse& other) const;
+
+    Horse& operator=(const Horse& other);
 };
 
 #endif //HORSE_H

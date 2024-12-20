@@ -18,7 +18,7 @@ unsigned int Herd::getId() const {
     return m_id;
 }
 
-void Herd::addHorse(Horse& horse) {
+void Herd::addHorse(std::shared_ptr<Horse> &horse) {
     Node* new_HorseNode = new Node(horse);
     if (!head) {
         head = new_HorseNode;
@@ -35,7 +35,7 @@ void Herd::removeHorse(unsigned int horseId) {
     Node* pre_node = nullptr;
 
     while (cur_node) {
-        if (cur_node->horse.getId() == horseId) {
+        if (cur_node->horse->getId() == horseId) {
             if (pre_node) {
                 pre_node->next = cur_node->next;
             } else {
@@ -57,23 +57,29 @@ bool Herd::leads (int horseId, int otherHorseId) {
 
     bool found=false;
     Node* cur_node = head;
-
-    Horse* first;
+    Node *first;
+    Node *second;
 
     for (int i = 0; i < m_size; i++) {
-        if ( horseId == cur_node->horse.getId()) {
-            first=&cur_node->horse;
+        if ( horseId == cur_node->horse->getId()) {
+            first->horse = cur_node->horse;
+            break;
+        }
+        cur_node = cur_node->next;
+    }
+    for (int i = 0; i < m_size; i++) {
+        if ( otherHorseId == cur_node->horse->getId()) {
+            second->horse = cur_node->horse;
             break;
         }
         cur_node = cur_node->next;
     }
 
-    Horse* curHorse=first;
-    Horse* next;
+    Node *curHorse = first;
+    Node* next;
 
     for (int i = 0; i < m_size; i++) {
-        next=curHorse->getLeader();
-        if(next->getId()==otherHorseId) {
+        if(curHorse->horse->follow(next->horse)) {
             found=true;
             break;
         }
