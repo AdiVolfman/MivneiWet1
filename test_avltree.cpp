@@ -1,53 +1,98 @@
+/*
 #include "AVLtree.h"
 
 int main() {
-    AVLTree tree;
+    AVLTree<int> tree;
 
-    // Test 1: Add elements
-    cout << "Test 1: Adding elements\n";
-    tree.add(10);
-    tree.add(20);
-    tree.add(30);
-    tree.add(40);
-    tree.add(50);
-    tree.add(25);
-    cout << "In-order traversal after adding: ";
-    tree.printInOrder(); // Expected: 10 20 25 30 40 50
+    // Insert values
+    tree.insert(10);
+    tree.insert(20);
+    tree.insert(30);
+    tree.insert(25);
+    tree.insert(5);
+    tree.insert(15);
 
-    // Test 2: Find elements
-    cout << "\nTest 2: Finding elements\n";
-    cout << "Find 30: " << (tree.find(30) ? "Found" : "Not Found")
-         << endl; // Expected: Found
-    cout << "Find 60: " << (tree.find(60) ? "Found" : "Not Found")
-         << endl; // Expected: Not Found
+    // Print tree in-order
+    std::cout << "In-order before removal: ";
+    tree.printInOrder();
 
-    // Test 3: Erase elements
-    cout << "\nTest 3: Erasing elements\n";
-    tree.erase(50);
-    cout << "In-order traversal after erasing 50: ";
-    tree.printInOrder(); // Expected: 10 20 25 30 40
+    // Remove values
+    tree.remove(10);
+    std::cout << "In-order after removing 10: ";
+    tree.printInOrder();
 
-    tree.erase(30);
-    cout << "In-order traversal after erasing 30: ";
-    tree.printInOrder(); // Expected: 10 20 25 40
+    tree.remove(20);
+    std::cout << "In-order after removing 20: ";
+    tree.printInOrder();
 
-    tree.erase(10);
-    cout << "In-order traversal after erasing 10: ";
-    tree.printInOrder(); // Expected: 20 25 40
+    tree.remove(5);
+    std::cout << "In-order after removing 5: ";
+    tree.printInOrder();
 
-    // Test 4: Erase non-existent element
-    cout << "\nTest 4: Erasing non-existent element\n";
-    tree.erase(100); // Should not crash or alter tree
-    cout << "In-order traversal after trying to erase 100: ";
-    tree.printInOrder(); // Expected: 20 25 40
+    Node<int> *t = tree.find(15);
+    // Find values
+    std::cout << "Find 15: " << (t ? "Found" : "Not found")
+              << std::endl;
+    *t = *tree.find(10);
+    std::cout << "Find 10: " << (tree.find(10) ? "Found" : "Not found")
+              << std::endl;
 
-    // Test 5: Large sequence
-    cout << "\nTest 5: Adding large sequence\n";
-    for (int i = 1; i <= 15; i++) {
-        tree.add(i * 5);
+    return 0;
+}
+*/
+#include "AVLtree.h"
+
+int main() {
+    AVLTree<int> tree;
+
+    // Insert values
+    tree.insert(10);
+    tree.insert(20);
+    tree.insert(30);
+    tree.insert(25);
+    tree.insert(5);
+    tree.insert(15);
+
+    // Print tree in-order
+    std::cout << "In-order before removal: ";
+    tree.printInOrder();
+
+    // Remove values
+    tree.remove(10);
+    std::cout << "\nIn-order after removing 10: ";
+    tree.printInOrder();
+
+    tree.remove(20);
+    std::cout << "\nIn-order after removing 20: ";
+    tree.printInOrder();
+
+    tree.remove(5);
+    std::cout << "\nIn-order after removing 5: ";
+    tree.printInOrder();
+
+    // Find values
+    Node<int> *t = tree.find(15);
+    if (t) {
+        std::cout << "\nFind 15: Found, key = " << t->key << std::endl;
+    } else {
+        std::cout << "\nFind 15: Not found" << std::endl;
     }
-    cout << "In-order traversal of large sequence: ";
-    tree.printInOrder(); // Expected: 5 10 15 ... 75 (all multiples of 5)
 
+    Node<int> *nodeToAssign = tree.find(10);
+    if (t && nodeToAssign) {
+        *t = *nodeToAssign;  // Only assign if both nodes exist
+        std::cout << "Assigned the value of node 10 to node 15." << std::endl;
+    } else {
+        std::cout << "Could not assign values, as one of the nodes is missing."
+                  << std::endl;
+    }
+
+    Node<int> *nodeAfterAssignment = tree.find(10);
+    if (nodeAfterAssignment) {
+        std::cout << "Find 10: Found, key = " << nodeAfterAssignment->key
+                  << std::endl;
+    } else {
+        std::cout << "Find 10: Not found" << std::endl;
+    }
     return 0;
 }
