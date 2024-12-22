@@ -2,10 +2,12 @@
 //
 // Created by meshi on 19/12/2024.
 //
+#include <stdexcept>
 #include "Horse.h"
+#include "Herd.h"
 #define START_KEY -1
 
-Horse::Horse(unsigned int id, int speed)
+Horse::Horse( unsigned int id , int speed )
     : m_id(id), m_speed(speed), m_herd(nullptr), m_key(START_KEY), m_leaderKey(START_KEY) {}
 
 int Horse::keyCounter = START_KEY;
@@ -38,10 +40,16 @@ int Horse::getKey() const {
     return m_key;
 }
 
+int Horse::getkeyCounter() const {
+    return keyCounter;
+}
+
+
 void Horse::setKey() {
 
-    m_key = keyCounter;
     keyCounter++;
+    m_key = keyCounter;
+
 }
 
 int Horse::getLeaderKey() const {
@@ -81,19 +89,21 @@ bool Horse::operator>(const Horse& other) const {
     return m_id > other.m_id;
 }
 
-bool Horse::isFollow(const std::shared_ptr<Horse> &other) {
-    if (m_leader.lock()==other &&
-        m_leader.lock()->getLeaderKey() == other->getKey()) {
+
+bool Horse::isFollow(const std::shared_ptr<Horse>& other) {
+    auto leader = m_leader.lock();
+    if (leader && leader == other && leader->getLeaderKey() == other->getKey()) {
         return true;
     }
     return false;
 }
 
-void Horse::follow(const std::shared_ptr<Horse> &other) {
-    m_leader.lock()=other;
-    m_leader.lock()->setLeaderKey(other->getKey());
 
+void Horse::follow(const std::shared_ptr<Horse> &other) {
+    m_leader = other;
+    m_leader.lock()->setLeaderKey(other->getKey());
 }
+
 
 
 Horse& Horse::operator=(const Horse& other) {

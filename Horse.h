@@ -8,6 +8,7 @@
 #include "Herd.h"
 #include <memory>
 
+class Herd;
 
 class Horse {
 private:
@@ -37,6 +38,8 @@ public:
     const Herd* getHerd() const;
 
     int getKey() const;
+
+    int getkeyCounter() const;
 
     int getLeaderKey() const;
 

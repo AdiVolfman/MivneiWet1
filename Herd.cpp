@@ -85,33 +85,71 @@ bool Herd::leads (int horseId, int otherHorseId) {
 bool Herd::can_run_together() const {
 
     Node* cur_node = head;
-    Node* root=nullptr;
+    Node* firstRoot=nullptr;
+    Node* anotherRoot=nullptr;
 
-    while (cur_node) {
-        std::shared_ptr<Horse> isLeader =
-            cur_node->horse->getLeader().lock();
+   while (cur_node) {
+        std::shared_ptr<Horse> isLeader = cur_node->horse->getLeader().lock();
 
-        if(!cur_node->horse->isFollow(isLeader)) {
-            root=cur_node;
-            break;
-        }
-        cur_node = cur_node->next;
-    }
-
-    if(!root) {
-        return false;}
-
-    cur_node=head;
-    while (cur_node) {
-        if(cur_node!=root) {
-            if(!leads(cur_node->horse->getId(),
-                root->horse->getHerd())) {
-                return false;
+        if (!cur_node->horse->isFollow(isLeader)) {
+            if (firstRoot == nullptr) {
+                firstRoot = cur_node;
+            } else {
+                anotherRoot = cur_node;
             }
         }
         cur_node = cur_node->next;
     }
+
+    if (firstRoot == nullptr || anotherRoot != nullptr) {
+        return false;
+    }
+
+    if (this->hasCycle()) {
+        return false;
+    }
+
     return true;
+}
+
+bool Herd::hasCycle() const {
+
+    int arrSize = head->horse->getkeyCounter()+1;
+    bool* visited = new bool[arrSize]();
+    Node* cur_node = head;
+
+    while (cur_node) {
+        std::shared_ptr<Horse> cur_horse=cur_node->horse;
+
+        if (visited[cur_horse->getKey()]) {
+            cur_node = cur_node->next;
+            continue;
+        }
+
+
+        while ( cur_horse ) {
+
+            if(visited[cur_horse->getKey()]) {
+                continue;
+            }
+
+            visited[cur_horse->getKey()]=true;
+
+
+            std::shared_ptr<Horse> next = cur_horse->getLeader().lock();
+
+            // קודם נוודא אם יש מנהיג
+            if (next && cur_horse->isFollow(next)) {
+                cur_horse = next;  // אם הסוס עוקב אחרי המנהיג, נמשיך אליו
+            } else {
+                break;  // אם אין מנהיג או אם הסוס לא עוקב אחרי המנהיג, נעצור
+            }
+
+        }
+        cur_node = cur_node->next;
+    }
+    delete[] visited;
+    return false ;
 }
 
 
