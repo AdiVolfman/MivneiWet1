@@ -6,6 +6,9 @@
 #define HERD_H
 #include "Horse.h"
 #include <memory>
+
+class Horse;
+
 class Herd {
 
 private:
@@ -38,6 +41,8 @@ public:
     bool leads (int horseId, int otherHorseId);
 
     bool can_run_together () const;
+
+    bool hasCycle() const;
 
     bool operator<(const Herd& other) const;
 
