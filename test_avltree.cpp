@@ -15,6 +15,9 @@ int main() {
     std::cout << "In-order traversal: ";
     tree.printInOrder();  // Expected: 5, 10, 15, 20, 25, 30
     std::cout << "\n";
+    std::cout << "Pre-order traversal: ";
+    tree.printPreOrder();  // Expected: 5, 10, 15, 20, 25, 30
+    std::cout << "\n";
 
     // Test 2: Searching for Existing and Non-Existing Keys
     std::cout << "Test 2: Searching for values 15, 10, and 50\n";
@@ -30,6 +33,9 @@ int main() {
     tree.remove(15);
     std::cout << "In-order traversal after removing 15: ";
     tree.printInOrder();  // Expected: 5, 10, 20, 25, 30
+    std::cout << "\n";
+    std::cout << "Pre-order traversal: ";
+    tree.printPreOrder();  // Expected: 5, 10, 15, 20, 25, 30
     std::cout << "\n";
 
     // Test 4: Remove Nodes with One Child
@@ -54,6 +60,9 @@ int main() {
     std::cout << "In-order traversal after inserting 35, 40, 50: ";
     tree.printInOrder();  // Expected: 10, 25, 30, 35, 40, 50
     std::cout << "\n";
+    std::cout << "Pre-order traversal: ";
+    tree.printPreOrder();  // Expected: 5, 10, 15, 20, 25, 30
+    std::cout << "\n";
 
     // Test 7: Searching for All Keys After Multiple Operations
     std::cout
@@ -70,6 +79,9 @@ int main() {
     std::cout << "In-order traversal after removing root: ";
     tree.printInOrder();  // Expected: 25, 30, 35, 40, 50
     std::cout << "\n";
+    std::cout << "Pre-order traversal: ";
+    tree.printPreOrder();  // Expected: 5, 10, 15, 20, 25, 30
+    std::cout << "\n";
 
     // Test 10: Edge Case - Removing All Nodes
     std::cout << "Test 10: Removing all nodes from the tree\n";
@@ -78,9 +90,15 @@ int main() {
         std::cout << "In-order traversal after removing " << key << ": ";
         tree.printInOrder();
         std::cout << "\n";
+        std::cout << "Pre-order traversal after removing " << key << ": ";
+        tree.printPreOrder();  // Expected: 5, 10, 15, 20, 25, 30
+        std::cout << "\n";
     }
     std::cout << "Final in-order traversal (should be empty): ";
     tree.printInOrder();  // Expected: (empty)
+    std::cout << "\n";
+    std::cout << "Pre-order traversal: ";
+    tree.printPreOrder();  // Expected: 5, 10, 15, 20, 25, 30
     std::cout << "\n";
 
     return 0;
