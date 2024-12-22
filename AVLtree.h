@@ -13,8 +13,8 @@ struct Node {
 
     Node();
     explicit Node(T val);
-    Node<T> &operator=(const Node<T> &other);
-
+    ~Node();
+    /*Node<T> &operator=(const Node<T> &other);*/
     template<typename U>
     friend std::ostream &operator<<(std::ostream &os, const Node<U> &node);
 };
@@ -209,9 +209,12 @@ AVLTree<T>::remove(Node<T> *node, T key) {// DONT FORGET TO DELETE ALLOCATIONS!!
             node->right == nullptr) {// if node has one or 0 children
             Node<T> *child = node->left ? node->left : node->right;
             if (child == nullptr) {// no children, removing the node
-                delete node;
-                return nullptr;
+                node->height = 0;
+                child = node;  // temporary pointer
+                node = nullptr;     // set node to nullptr
+                delete child;           // delete the original node
             } else {// one child, swapping with child
+                node->height = 1;
                 node->key = child->key;
                 node->left = nullptr;
                 node->right = nullptr;
