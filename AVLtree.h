@@ -11,10 +11,9 @@ struct Node {
     Node<T> *right;
     int height;
 
-    Node();
     explicit Node(T val);
-    Node<T> &operator=(const Node<T> &other);
-
+    ~Node();
+    /*Node<T> &operator=(const Node<T> &other);*/
     template<typename U>
     friend std::ostream &operator<<(std::ostream &os, const Node<U> &node);
 };
@@ -33,26 +32,45 @@ private:
     Node<T> *smallestNode(Node<T> *node);
     int getBalanceFactor(Node<T> *node);
     void inOrder(Node<T> *node);
+    void preOrder(Node<T> *node);
+
     Node<T> *LLrotation(Node<T> *node);
     Node<T> *RRrotation(Node<T> *node);
     Node<T> *LRrotation(Node<T> *node);
     Node<T> *RLrotation(Node<T> *node);
 
-
 public:
+
     explicit AVLTree<T>();
     void insert(T key);
-    Node<T> *remove(T key);
+    void remove(T key);
     Node<T> *find(T key);
     void printInOrder();
+    void printPreOrder();
+    Node<T> *getRoot();
+    ~AVLTree();
 };
 
 
 template<typename T>
 Node<T>::Node(T val) : key(val), left(nullptr), right(nullptr), height(1) {}
 
+
 template<typename T>
 AVLTree<T>::AVLTree() : root(nullptr) {}
+
+template<typename T>
+Node<T>::~Node() {
+    delete left;   // Recursively delete the left subtree
+    delete right;  // Recursively delete the right subtree
+    // Note: No need to delete `this`, as that is handled by the calling code.
+}
+
+template<typename T>
+AVLTree<T>::~AVLTree() {
+    delete root;  // This will recursively delete all nodes via Node destructor
+    root = nullptr;  // Not strictly necessary, but good practice
+}
 
 // Definition of the friend function
 template<typename T>
@@ -61,7 +79,7 @@ std::ostream &operator<<(std::ostream &os, const Node<T> &node) {
     return os;
 }
 
-template<typename T>
+/*template<typename T>
 Node<T> &Node<T>::operator=(const Node<T> &other) {
     if (this != &other) {
         key = other.key;
@@ -70,6 +88,10 @@ Node<T> &Node<T>::operator=(const Node<T> &other) {
         height = other.height;
     }
     return *this;
+}*/
+template<typename T>
+Node<T> *AVLTree<T>::getRoot() {
+    return this->root;
 }
 
 template<typename T>
@@ -80,6 +102,7 @@ int AVLTree<T>::getHeight(Node<T> *node) {
     return node->height;
 }
 
+
 template<typename T>
 int AVLTree<T>::getBalanceFactor(Node<T> *node) {
     if (node == nullptr) { return 0; }
@@ -89,7 +112,7 @@ int AVLTree<T>::getBalanceFactor(Node<T> *node) {
 template<typename T>
 Node<T> *AVLTree<T>::smallestNode(Node<T> *node) {
     Node<T> *curr = node;
-    while (curr->left != nullptr) {
+    while (curr->left != nullptr) {//inorder
         curr = curr->left;
     }
     return curr;
@@ -105,10 +128,9 @@ Node<T> *AVLTree<T>::LLrotation(Node<T> *node) { //after insertion
     Node<T> *Ar = A->right;
     A->right = node;
     node->left = Ar;
-    //A is now root
-    //updating height
-    A->height = max(getHeight(A->left), getHeight(A->right));
-    node->height = max(getHeight(node->left), getHeight(node->right));
+    //
+    A->height = max(getHeight(A->right), getHeight(A->left)) + 1;
+    node->height = max(getHeight(node->right), getHeight(node->left)) + 1;
     //now height is set
     return A;//returning the new root
 }
@@ -126,33 +148,25 @@ Node<T> *AVLTree<T>::RRrotation(Node<T> *node) {
     node->height = max(getHeight(node->right), getHeight(node->left)) + 1;
     B->height = max(getHeight(B->right), getHeight(B->left)) + 1;
 
+
     return B;
 }
 
 template<typename T>
 Node<T> *AVLTree<T>::LRrotation(Node<T> *node) {
     //first we rotate the left size to the left(RR) then we rotate the root with the new root from the rotation right(LL)
-    Node<T> *B = RRrotation(node->left);
-    Node<T> *base = LLrotation(B);
-    //base is now the new root
-    B->height = max(getHeight(B->left), getHeight(B->right)) + 1;
-    base->height = max(getHeight(base->left), getHeight(base->right)) + 1;
-    //height updated
-    return base;
+    node->left = RRrotation(node->left);
+    return LLrotation(node);
 }
 
 template<typename T>
 Node<T> *AVLTree<T>::RLrotation(Node<T> *node) {
     //first we rotate the right size to the right(LL) then we rotate the root with the new root from the rotation left(RR)
-    Node<T> *B = LLrotation(node->right);
-    Node<T> *base = RRrotation(B);
-    //base is now the new root
-    B->height = max(getHeight(B->left), getHeight(B->right)) + 1;
-    base->height = max(getHeight(base->left), getHeight(base->right)) + 1;
-    //height updated
-    return base;
+    node->right = LLrotation(node->right);
+    return RRrotation(node);
 
 }
+
 
 template<typename T>
 Node<T> *AVLTree<T>::insert(Node<T> *node,
@@ -170,11 +184,11 @@ Node<T> *AVLTree<T>::insert(Node<T> *node,
         node->left = insert(node->left, key);//recursion to the left
     } else if (key > node->key) {
         node->right = insert(node->right, key);//recursion to the right
-    } else {
+    } else {//key == node->key
         return node;
     }
 //updating the height
-    node->height = 1 + max(getHeight(node->left), getHeight(node->right));
+    node->height = max(getHeight(node->right), getHeight(node->left)) + 1;
     int balanceFactor = getBalanceFactor(node);
 
     // ROTATIONS
@@ -192,7 +206,6 @@ Node<T> *AVLTree<T>::insert(Node<T> *node,
     if (balanceFactor < -1 && getBalanceFactor(node->right) < 1) {
         return RRrotation(node);
     }
-
     return node;
 }
 
@@ -209,13 +222,14 @@ AVLTree<T>::remove(Node<T> *node, T key) {// DONT FORGET TO DELETE ALLOCATIONS!!
             node->right == nullptr) {// if node has one or 0 children
             Node<T> *child = node->left ? node->left : node->right;
             if (child == nullptr) {// no children, removing the node
-                delete node;
+                node->height = 0;
+                delete node;           // delete the original node
                 return nullptr;
             } else {// one child, swapping with child
-                node->key = child->key;
-                node->left = nullptr;
                 node->right = nullptr;
-                delete child;
+                node->left = nullptr;
+                delete node;
+                return child;
             }
         } else {// node has 2 children, finiding the smallest ket on right child
             Node<T> *smallest = smallestNode(
@@ -226,19 +240,19 @@ AVLTree<T>::remove(Node<T> *node, T key) {// DONT FORGET TO DELETE ALLOCATIONS!!
                                  smallest->key);//remove the leaf
         }
     }
-
+    if (node == nullptr) { return node; }
 //updating the height
     node->height = max(getHeight(node->left), getHeight(node->right)) + 1;
     int balanceFactor = getBalanceFactor(node);
 
     // Balancing cases
-    if (balanceFactor > 1 && getBalanceFactor(node->left) > -1) {
+    if (balanceFactor > 1 && getBalanceFactor(node->left) >= 0) {
         return LLrotation(node);
     }
     if (balanceFactor > 1 && getBalanceFactor(node->left) < 0) {
         return LRrotation(node);
     }
-    if (balanceFactor < -1 && getBalanceFactor(node->right) < 1) {
+    if (balanceFactor < -1 && getBalanceFactor(node->right) <= 0) {
         return RRrotation(node);
     }
     if (balanceFactor < -1 && getBalanceFactor(node->right) > 0) {
@@ -269,8 +283,8 @@ void AVLTree<T>::insert(T key) {
 }
 
 template<typename T>
-Node<T> *AVLTree<T>::remove(T key) {
-    return remove(this->root, key);
+void AVLTree<T>::remove(T key) {
+    root = remove(this->root, key);
 }
 
 template<typename T>
@@ -284,5 +298,19 @@ void AVLTree<T>::inOrder(Node<T> *node) {
 template<typename T>
 void AVLTree<T>::printInOrder() {
     inOrder(this->root);
+    cout << endl;
+}
+
+template<typename T>
+void AVLTree<T>::preOrder(Node<T> *node) {
+    if (!node) { return; }
+    cout << node->key << " ";
+    preOrder(node->left);
+    preOrder(node->right);
+}
+
+template<typename T>
+void AVLTree<T>::printPreOrder() {
+    preOrder(this->root);
     cout << endl;
 }
