@@ -18,7 +18,9 @@ private:
     Herd* m_herd;
     int m_key;
     int m_leaderKey;
+    int m_myCount;
     static int keyCounter ;
+    static int horseCounter ;
 
 
 public:
@@ -38,6 +40,10 @@ public:
     const Herd* getHerd() const;
 
     int getKey() const;
+
+    int getMyCount() const;
+
+    int getHorseCounter() const;
 
     int getkeyCounter() const;
 
