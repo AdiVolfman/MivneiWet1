@@ -104,7 +104,7 @@ bool Horse::operator>(const Horse& other) const {
 
 bool Horse::isFollow(const std::shared_ptr<Horse>& other) {
     auto leader = m_leader.lock();
-    if (leader && leader == other && leader->getLeaderKey() == other->getKey()) {
+    if (other && leader && leader == other && this->getLeaderKey() == other->getKey()) {
         return true;
     }
     return false;
@@ -113,8 +113,8 @@ bool Horse::isFollow(const std::shared_ptr<Horse>& other) {
 
 void Horse::follow(const std::shared_ptr<Horse> &other) {
     m_leader = other;
-    m_leader.lock()->setLeaderKey(other->getKey());
-    m_leaderKey=other->getkeyCounter();
+   // m_leader.lock()->setLeaderKey(other->getKey());
+    m_leaderKey = other->getKey();
 
 }
 
