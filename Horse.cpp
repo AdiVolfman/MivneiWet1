@@ -6,11 +6,16 @@
 #include "Horse.h"
 #include "Herd.h"
 #define START_KEY -1
+#define START_COUNT 1
 
 Horse::Horse( unsigned int id , int speed )
-    : m_id(id), m_speed(speed), m_herd(nullptr), m_key(START_KEY), m_leaderKey(START_KEY) {}
+    : m_id(id), m_speed(speed), m_herd(nullptr), m_key(START_KEY), m_leaderKey(START_KEY) {
+    m_myCount=horseCounter;
+    horseCounter++;
+}
 
 int Horse::keyCounter = START_KEY;
+int Horse::horseCounter = START_COUNT;
 
 unsigned int Horse::getId() const {
     return m_id;
@@ -44,6 +49,13 @@ int Horse::getkeyCounter() const {
     return keyCounter;
 }
 
+ int Horse::getMyCount() const {
+     return m_myCount;
+ }
+
+int Horse::getHorseCounter() const {
+    return horseCounter;
+}
 
 void Horse::setKey() {
 
@@ -72,7 +84,7 @@ void Horse::leave_herd() {
 }
 
 
-void Horse::join_herd(Herd* newHerd) {
+void Horse::join_herd(Herd* newHerd ) {
     if (newHerd == nullptr) {
        throw std::invalid_argument("");
     }
@@ -102,6 +114,8 @@ bool Horse::isFollow(const std::shared_ptr<Horse>& other) {
 void Horse::follow(const std::shared_ptr<Horse> &other) {
     m_leader = other;
     m_leader.lock()->setLeaderKey(other->getKey());
+    m_leaderKey=other->getkeyCounter();
+
 }
 
 

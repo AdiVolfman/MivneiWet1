@@ -9,20 +9,23 @@
 
 class Horse;
 
+
+struct Node {
+    std::shared_ptr<Horse> horse;
+    Node* next;
+    Node( std::shared_ptr<Horse> horse, Node* next = nullptr) : horse(horse),
+    next(next) {};
+};
+
 class Herd {
 
 private:
     unsigned int m_id;
+
     int m_size;
 
-    struct Node {
-        std::shared_ptr<Horse> horse;
-        Node* next;
-        Node( std::shared_ptr<Horse> horse, Node* next = nullptr) : horse(horse),
-        next(next) {}
-    };
-
     Node* head;
+
     Node* tail;
 
 

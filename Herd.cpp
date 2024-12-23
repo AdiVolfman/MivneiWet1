@@ -35,7 +35,8 @@ void Herd::removeHorse(unsigned int horseId) {
     Node* pre_node = nullptr;
 
     while (cur_node) {
-        if (cur_node->horse->getId() == horseId) {
+        if (cur_node->horse && cur_node->horse->getId() == horseId) {
+            // מחיקת הצומת הנוכחית
             if (pre_node) {
                 pre_node->next = cur_node->next;
             } else {
@@ -45,39 +46,48 @@ void Herd::removeHorse(unsigned int horseId) {
                 tail = pre_node;
             }
             delete cur_node;
+            m_size--; // עדכון גודל הרשימה רק אם סוס הוסר
             return;
         }
         pre_node = cur_node;
         cur_node = cur_node->next;
     }
-    m_size--;
+
+    // אם לא נמצא הסוס עם ה-id, אין שינוי בגודל הרשימה
 }
+
 
 bool Herd::leads (int horseId, int otherHorseId) {
 
     bool found=false;
     Node* cur_node = head;
-    Node *first=nullptr;
-    Node *second=nullptr;
+    std::shared_ptr<Horse> current = nullptr;
+    std::shared_ptr<Horse> leader = nullptr;
 
     while (cur_node) {
         if (cur_node->horse->getId() == horseId) {
-            first = cur_node;
+            current = cur_node->horse;
         }
         if (cur_node->horse->getId() == otherHorseId) {
-            second = cur_node;
+            leader = cur_node->horse;
         }
         cur_node = cur_node->next;
     }
 
-    cur_node = first;
-
-    while (cur_node) {
-        if(cur_node->horse->isFollow(second->horse)) {
+    while (current) {
+        if(current -> isFollow(leader)) {
             found=true;
             break;
         }
-        cur_node=cur_node->next;
+        std::shared_ptr<Horse> next = current->getLeader().lock();
+        if(current->isFollow(next)) {
+            current = next;
+        } else {
+            break;
+        }
+        if(current == next) {
+            break;
+        }
     }
     return found;
 }
@@ -114,35 +124,37 @@ bool Herd::can_run_together() const {
 
 bool Herd::hasCycle() const {
 
-    int arrSize = head->horse->getkeyCounter()+1;
+    int arrSize = head->horse->getHorseCounter()+1;
     bool* visited = new bool[arrSize]();
+
     Node* cur_node = head;
 
     while (cur_node) {
-        std::shared_ptr<Horse> cur_horse=cur_node->horse;
+        std::shared_ptr<Horse> cur_horse = cur_node->horse;
 
-        if (visited[cur_horse->getKey()]) {
+        if (visited[cur_horse->getMyCount()]) {
             cur_node = cur_node->next;
             continue;
         }
 
-
         while ( cur_horse ) {
-
-            if(visited[cur_horse->getKey()]) {
-                continue;
-            }
-
-            visited[cur_horse->getKey()]=true;
-
 
             std::shared_ptr<Horse> next = cur_horse->getLeader().lock();
 
-            // קודם נוודא אם יש מנהיג
+            if(next && next == cur_node->horse) {
+                return true;
+            }
+
+            if(visited[cur_horse->getMyCount()]) {
+                break;
+            }
+
+            visited[cur_horse->getMyCount()] = true;
+
             if (next && cur_horse->isFollow(next)) {
-                cur_horse = next;  // אם הסוס עוקב אחרי המנהיג, נמשיך אליו
+                cur_horse = next;
             } else {
-                break;  // אם אין מנהיג או אם הסוס לא עוקב אחרי המנהיג, נעצור
+                break;
             }
 
         }
