@@ -34,6 +34,7 @@ void Herd::addHorse(std::shared_ptr<Horse> &horse) {
     }
     horse->setKey();
     m_size++;
+    horse->join_herd(this);
 
 }
 

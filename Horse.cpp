@@ -5,12 +5,10 @@
 #include <stdexcept>
 #include "Horse.h"
 #include "Herd.h"
-#define START_KEY -1
-#define START_COUNT 1
 
 Horse::Horse( unsigned int id , int speed )
     : m_id(id), m_speed(speed), m_herd(nullptr), m_key(START_KEY), m_leaderKey(START_KEY) {
-    m_myCount=horseCounter;
+    m_myCount = horseCounter;
     horseCounter++;
 }
 
@@ -25,7 +23,7 @@ int Horse::getSpeed() const {
     return m_speed;
 }
 
-const Herd* Horse::getHerd() const {
+Herd* Horse::getHerd() const {
     return m_herd;
 }
 
@@ -80,7 +78,7 @@ void Horse::leave_herd() {
     m_leaderKey = START_KEY;
     m_key = START_KEY;
     m_leader.reset();
-    m_herd=nullptr;
+    m_herd = nullptr;
 }
 
 
