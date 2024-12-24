@@ -18,6 +18,11 @@ unsigned int Herd::getId() const {
     return m_id;
 }
 
+int Herd::getSize() const {
+    return m_size;
+}
+
+
 void Herd::addHorse(std::shared_ptr<Horse> &horse) {
     Node* new_HorseNode = new Node(horse);
     if (!head) {
