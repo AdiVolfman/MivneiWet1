@@ -47,6 +47,8 @@ public:
 
     bool hasCycle() const;
 
+    int getSize() const;
+
     bool operator<(const Herd& other) const;
 
     bool operator>(const Herd& other) const;
