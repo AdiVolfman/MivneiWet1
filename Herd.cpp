@@ -24,7 +24,15 @@ int Herd::getSize() const {
 
 
 void Herd::addHorse(std::shared_ptr<Horse> &horse) {
-    Node* new_HorseNode = new Node(horse);
+
+    Node* new_HorseNode = nullptr;
+
+    try {
+        new_HorseNode = new Node(horse);
+    } catch (const std::bad_alloc& e) {
+        throw std::bad_alloc();
+    }
+
     if (!head) {
         head = new_HorseNode;
         tail = new_HorseNode;
@@ -32,8 +40,7 @@ void Herd::addHorse(std::shared_ptr<Horse> &horse) {
         tail->next = new_HorseNode;
         tail = new_HorseNode;
     }
-    horse->setKey();
-    m_size++;
+    m_size++;;
     horse->join_herd(this);
 
 }
@@ -44,7 +51,6 @@ void Herd::removeHorse(unsigned int horseId) {
 
     while (cur_node) {
         if (cur_node->horse && cur_node->horse->getId() == horseId) {
-            // מחיקת הצומת הנוכחית
             if (pre_node) {
                 pre_node->next = cur_node->next;
             } else {
@@ -54,14 +60,12 @@ void Herd::removeHorse(unsigned int horseId) {
                 tail = pre_node;
             }
             delete cur_node;
-            m_size--; // עדכון גודל הרשימה רק אם סוס הוסר
+            m_size--;
             return;
         }
         pre_node = cur_node;
         cur_node = cur_node->next;
     }
-
-    // אם לא נמצא הסוס עם ה-id, אין שינוי בגודל הרשימה
 }
 
 
@@ -132,8 +136,14 @@ bool Herd::can_run_together() const {
 
 bool Herd::hasCycle() const {
 
-    int arrSize = head->horse->getHorseCounter()+1;
-    bool* visited = new bool[arrSize]();
+    int arrSize = head->horse->getHorseCounter() + 1;
+    bool* visited = nullptr;
+
+    try {
+        visited = new bool[arrSize]();
+    } catch (const std::bad_alloc& e) {
+        throw;
+    }
 
     Node* cur_node = head;
 
@@ -150,6 +160,7 @@ bool Herd::hasCycle() const {
             std::shared_ptr<Horse> next = cur_horse->getLeader().lock();
 
             if(next && next == cur_node->horse) {
+                delete[] visited;
                 return true;
             }
 
@@ -185,7 +196,7 @@ Herd& Herd::operator=(const Herd& other) {
     if (this == &other) {
         return *this;
     }
-
+    try {
     m_id = other.m_id;
 
     while (head) {
@@ -201,6 +212,9 @@ Herd& Herd::operator=(const Herd& other) {
     while (cur_other) {
         addHorse(cur_other->horse); // Reuse the addHorse method
         cur_other = cur_other->next;
+    }
+    } catch (const std::bad_alloc&) {
+        throw;
     }
 
     return *this;
