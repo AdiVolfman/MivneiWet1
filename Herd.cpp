@@ -8,7 +8,7 @@ Herd::Herd(unsigned int id) : m_id(id),m_size(SIZE0),head(nullptr), tail(nullptr
 
 Herd::~Herd() {
     while (head) {
-        Node* cur_node = head;
+        NodeList* cur_node = head;
         head = head->next;
         delete cur_node;
     }
@@ -25,10 +25,10 @@ int Herd::getSize() const {
 
 void Herd::addHorse(std::shared_ptr<Horse> &horse) {
 
-    Node* new_HorseNode = nullptr;
+    NodeList* new_HorseNode = nullptr;
 
     try {
-        new_HorseNode = new Node(horse);
+        new_HorseNode = new NodeList(horse);
     } catch (const std::bad_alloc& e) {
         throw std::bad_alloc();
     }
@@ -38,23 +38,30 @@ void Herd::addHorse(std::shared_ptr<Horse> &horse) {
         tail = new_HorseNode;
     } else {
         tail->next = new_HorseNode;
+        new_HorseNode->prev = tail;
         tail = new_HorseNode;
     }
     m_size++;;
-    horse->join_herd(this);
+    horse->join_herd( this, new_HorseNode );
 
 }
 
 void Herd::removeHorse(unsigned int horseId) {
-    Node* cur_node = head;
-    Node* pre_node = nullptr;
+    NodeList* cur_node = head;
+    NodeList* pre_node = nullptr;
 
     while (cur_node) {
         if (cur_node->horse && cur_node->horse->getId() == horseId) {
             if (pre_node) {
                 pre_node->next = cur_node->next;
+                if (cur_node->next) {
+                    cur_node->next->prev = pre_node;
+                }
             } else {
                 head = cur_node->next;
+                if (head) {
+                    head->prev = nullptr;
+                }
             }
             if (cur_node == tail) {
                 tail = pre_node;
@@ -68,11 +75,44 @@ void Herd::removeHorse(unsigned int horseId) {
     }
 }
 
+void Herd::removeHorse(NodeList* nodeToRemove) {
+    if (!nodeToRemove) {
+        return;
+    }
+
+    if (nodeToRemove == head) {
+        head = nodeToRemove->next;
+        if (head) {
+            head->prev = nullptr;
+        }
+    }
+
+    else if (nodeToRemove == tail) {
+        tail = nodeToRemove->prev;
+        if (tail) {
+            tail->next = nullptr;
+        }
+    }
+
+    else {
+        if (nodeToRemove->prev) {
+            nodeToRemove->prev->next = nodeToRemove->next;
+        }
+        if (nodeToRemove->next) {
+            nodeToRemove->next->prev = nodeToRemove->prev;
+        }
+    }
+
+    delete nodeToRemove;
+    m_size--;
+}
+
+
 
 bool Herd::leads (int horseId, int otherHorseId) {
 
     bool found=false;
-    Node* cur_node = head;
+    NodeList* cur_node = head;
     std::shared_ptr<Horse> current = nullptr;
     std::shared_ptr<Horse> leader = nullptr;
 
@@ -106,9 +146,9 @@ bool Herd::leads (int horseId, int otherHorseId) {
 
 bool Herd::can_run_together() const {
 
-    Node* cur_node = head;
-    Node* firstRoot=nullptr;
-    Node* anotherRoot=nullptr;
+    NodeList* cur_node = head;
+    NodeList* firstRoot=nullptr;
+    NodeList* anotherRoot=nullptr;
 
    while (cur_node) {
         std::shared_ptr<Horse> isLeader = cur_node->horse->getLeader().lock();
@@ -145,7 +185,7 @@ bool Herd::hasCycle() const {
         throw;
     }
 
-    Node* cur_node = head;
+    NodeList* cur_node = head;
 
     while (cur_node) {
         std::shared_ptr<Horse> cur_horse = cur_node->horse;
@@ -200,7 +240,7 @@ Herd& Herd::operator=(const Herd& other) {
     m_id = other.m_id;
 
     while (head) {
-        Node* cur_node = head;
+        NodeList* cur_node = head;
         head = head->next;
         delete cur_node;
     }
@@ -208,7 +248,7 @@ Herd& Herd::operator=(const Herd& other) {
     tail = nullptr;
     m_size = SIZE0;
 
-    Node* cur_other = other.head;
+    NodeList* cur_other = other.head;
     while (cur_other) {
         addHorse(cur_other->horse); // Reuse the addHorse method
         cur_other = cur_other->next;
