@@ -3,14 +3,13 @@
 #define HORSE_H
 
 #include <memory>
+#include "Herd.h"
 
 #define START_KEY -1
 #define START_COUNT 1
 
 class Herd;     // הכרזה מוקדמת על Herd
 struct  NodeList; // הכרזה מוקדמת על NodeList
-
-class Herd;
 
 class Horse {
 private:
