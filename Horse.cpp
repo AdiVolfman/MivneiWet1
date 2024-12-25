@@ -78,9 +78,6 @@ void Horse::setLeaderKey(int leaderId) {
 }
 
 void Horse::leave_herd() {
-    if (m_herd == nullptr) {
-       throw std::runtime_error("");
-    }
 
     m_leaderKey = START_KEY;
     m_key = START_KEY;

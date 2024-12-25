@@ -1,4 +1,5 @@
 
+#include <iostream>
 #include "Herd.h"
 #define SIZE0 0
 
@@ -30,13 +31,13 @@ void Herd::addHorse(std::shared_ptr<Horse> &horse) {
     try {
         new_HorseNode = new NodeList(horse);
     } catch (const std::bad_alloc& e) {
-        throw std::bad_alloc();
+        throw;
     }
 
     if (!head) {
         head = new_HorseNode;
         tail = new_HorseNode;
-    } else {
+    }  else {
         tail->next = new_HorseNode;
         new_HorseNode->prev = tail;
         tail = new_HorseNode;
@@ -46,6 +47,7 @@ void Herd::addHorse(std::shared_ptr<Horse> &horse) {
 
 }
 
+/*
 void Herd::removeHorse(unsigned int horseId) {
     NodeList* cur_node = head;
     NodeList* pre_node = nullptr;
@@ -74,6 +76,7 @@ void Herd::removeHorse(unsigned int horseId) {
         cur_node = cur_node->next;
     }
 }
+*/
 
 void Herd::removeHorse(NodeList* nodeToRemove) {
     if (!nodeToRemove) {
@@ -81,20 +84,18 @@ void Herd::removeHorse(NodeList* nodeToRemove) {
     }
 
     if (nodeToRemove == head) {
-        head = nodeToRemove->next;
+        head = nodeToRemove->next; // עדכון הראש לצומת הבא
         if (head) {
-            head->prev = nullptr;
+            head->prev = nullptr; // הראש החדש צריך להצביע ל-null ב-prev
+        } else {
+            tail = nullptr; // אם הרשימה ריקה, tail גם מתאפס
         }
-    }
-
-    else if (nodeToRemove == tail) {
-        tail = nodeToRemove->prev;
+    } else if (nodeToRemove == tail) {
+        tail = nodeToRemove->prev; // עדכון הסוף לצומת הקודם
         if (tail) {
-            tail->next = nullptr;
+            tail->next = nullptr; // tail החדש צריך להצביע ל-null ב-next
         }
-    }
-
-    else {
+    } else {
         if (nodeToRemove->prev) {
             nodeToRemove->prev->next = nodeToRemove->next;
         }
@@ -102,9 +103,8 @@ void Herd::removeHorse(NodeList* nodeToRemove) {
             nodeToRemove->next->prev = nodeToRemove->prev;
         }
     }
-
-    delete nodeToRemove;
     m_size--;
+    delete nodeToRemove;
 }
 
 
@@ -258,6 +258,20 @@ Herd& Herd::operator=(const Herd& other) {
     }
 
     return *this;
+}
+
+void Herd::printList() const {
+    NodeList* current = head;
+    std::cout << "Herd ID: " << m_id << " | Size: " << m_size << " | Horses: ";
+
+    // מעבר על הרשימה והדפסת כל סוס
+    while (current) {
+        if (current->horse) {
+            std::cout << current->horse->getId() << " ";
+        }
+        current = current->next;
+    }
+    std::cout << std::endl;
 }
 
 

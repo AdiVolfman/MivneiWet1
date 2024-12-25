@@ -6,7 +6,7 @@
 // The following main file is necessary to link and run your code.
 // This file is READ ONLY: even if you submit something else, the compiler will use our file.
 // 
-/*
+
 #include "plains25a1.h"
 #include <string>
 #include <iostream>
@@ -17,6 +17,7 @@ void print(string cmd, StatusType res);
 void print(string cmd, output_t<int> res);
 void print(string cmd, output_t<bool> res);
 
+/*
 int main()
 {
     
@@ -24,13 +25,15 @@ int main()
 
     // Init
     Plains *obj = new Plains();
-    
+
+
     // Execute all commands in file
     string op;
     while (cin >> op)
     {
         if (!op.compare("add_herd")) {
             cin >> d1;
+            std::cout <<  "2";
             print(op, obj->add_herd(d1));
         } else if (!op.compare("remove_herd")) {
             cin >> d1;
