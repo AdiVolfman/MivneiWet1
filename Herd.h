@@ -13,8 +13,9 @@ class Horse;
 struct Node {
     std::shared_ptr<Horse> horse;
     Node* next;
+    Node* prev;
     Node( std::shared_ptr<Horse> horse, Node* next = nullptr) : horse(horse),
-    next(next) {};
+    next(next), prev(prev)  {};
 };
 
 class Herd {
@@ -40,6 +41,8 @@ public:
     void addHorse(std::shared_ptr<Horse> &horse);
 
     void removeHorse(unsigned int horseId);
+
+    void removeHorse(Node* nodeToRemove);
 
     bool leads (int horseId, int otherHorseId);
 

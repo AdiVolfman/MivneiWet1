@@ -6,7 +6,7 @@
 #include "Herd.h"
 
 Horse::Horse( unsigned int id , int speed )
-    : m_id(id), m_speed(speed), m_herd(nullptr), m_key(START_KEY), m_leaderKey(START_KEY) {
+    : m_id(id), m_speed(speed), m_herd(nullptr),m_node(nullptr), m_key(START_KEY), m_leaderKey(START_KEY) {
     m_myCount = horseCounter;
     horseCounter++;
 }
@@ -25,6 +25,11 @@ int Horse::getSpeed() const {
 Herd* Horse::getHerd() const {
     return m_herd;
 }
+
+Node *Horse::getNode() const {
+    return m_node;
+}
+
 
 void Horse::setHerd(Herd* newHerd) {
     m_herd = newHerd;
@@ -78,14 +83,16 @@ void Horse::leave_herd() {
     m_key = START_KEY;
     m_leader.reset();
     m_herd = nullptr;
+    m_node = nullptr;
 }
 
 
-void Horse::join_herd(Herd* newHerd ) {
+void Horse::join_herd(Herd* newHerd , Node* newNode ) {
     if (newHerd == nullptr) {
        throw std::invalid_argument("");
     }
     m_herd = newHerd;
+    m_node = newNode;
     setKey();
 }
 
