@@ -100,10 +100,12 @@ StatusType Plains::join_herd(int horseId, int herdId) {
     }
 
     std::shared_ptr<Herd> found_herd;
+    bool isEmpteyHerd=false;
 
     if (!herdTree->find(herdId)) {
         if (emptyHerdTree->find(herdId)) {
             found_herd = emptyHerdTree->find(herdId);
+            isEmpteyHerd =true;
         } else {
             return StatusType::FAILURE;
         }
@@ -113,6 +115,10 @@ StatusType Plains::join_herd(int horseId, int herdId) {
 
     try {
         found_herd->addHorse(found_horse);
+        if(isEmpteyHerd) {
+            emptyHerdTree->remove(herdId);
+            herdTree->insert( herdId , found_herd);
+        }
     }
     catch (std::bad_alloc &e) {
         return StatusType::FAILURE;
