@@ -38,10 +38,11 @@ void Herd::addHorse(std::shared_ptr<Horse> &horse) {
         tail = new_HorseNode;
     } else {
         tail->next = new_HorseNode;
+        new_HorseNode->prev = tail;
         tail = new_HorseNode;
     }
     m_size++;;
-    horse->join_herd(this);
+    horse->join_herd( this, new_HorseNode );
 
 }
 
@@ -53,8 +54,14 @@ void Herd::removeHorse(unsigned int horseId) {
         if (cur_node->horse && cur_node->horse->getId() == horseId) {
             if (pre_node) {
                 pre_node->next = cur_node->next;
+                if (cur_node->next) {
+                    cur_node->next->prev = pre_node;
+                }
             } else {
                 head = cur_node->next;
+                if (head) {
+                    head->prev = nullptr;
+                }
             }
             if (cur_node == tail) {
                 tail = pre_node;
@@ -67,6 +74,39 @@ void Herd::removeHorse(unsigned int horseId) {
         cur_node = cur_node->next;
     }
 }
+
+void Herd::removeHorse(Node* nodeToRemove) {
+    if (!nodeToRemove) {
+        return;
+    }
+
+    if (nodeToRemove == head) {
+        head = nodeToRemove->next;
+        if (head) {
+            head->prev = nullptr;
+        }
+    }
+
+    else if (nodeToRemove == tail) {
+        tail = nodeToRemove->prev;
+        if (tail) {
+            tail->next = nullptr;
+        }
+    }
+
+    else {
+        if (nodeToRemove->prev) {
+            nodeToRemove->prev->next = nodeToRemove->next;
+        }
+        if (nodeToRemove->next) {
+            nodeToRemove->next->prev = nodeToRemove->prev;
+        }
+    }
+
+    delete nodeToRemove;
+    m_size--;
+}
+
 
 
 bool Herd::leads (int horseId, int otherHorseId) {
