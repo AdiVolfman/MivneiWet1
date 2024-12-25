@@ -1,4 +1,3 @@
-
 //
 // Created by meshi on 19/12/2024.
 //
@@ -7,6 +6,10 @@
 #define HORSE_H
 #include "Herd.h"
 #include <memory>
+
+#define START_KEY -1
+#define START_COUNT 1
+
 
 class Herd;
 
@@ -37,7 +40,7 @@ public:
 
     const std::weak_ptr<Horse> getLeader() const;
 
-    const Herd* getHerd() const;
+    Herd* getHerd() const;
 
     int getKey() const;
 
