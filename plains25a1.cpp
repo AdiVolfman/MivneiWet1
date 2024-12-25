@@ -44,7 +44,7 @@ StatusType Plains::add_herd(int herdId) {
         return StatusType::FAILURE;
     }
     std::shared_ptr<Herd> sharedPtr = std::make_shared<Herd>(*h);
-    herdTree->insert(herdId, sharedPtr);
+    emptyHerdTree->insert(herdId, sharedPtr);
     return StatusType::SUCCESS;
 }
 
@@ -52,10 +52,10 @@ StatusType Plains::remove_herd(int herdId) {
     if (herdId <= 0) {
         return StatusType::INVALID_INPUT;
     }
-    if (!(herdTree->find(herdId))) {
+    if (!(emptyHerdTree->find(herdId))) {
         return StatusType::FAILURE;
     }
-    herdTree->remove(herdId);
+    emptyHerdTree->remove(herdId);
     return StatusType::SUCCESS;
 }
 
@@ -78,14 +78,7 @@ StatusType Plains::add_horse(int horseId, int speed) {
     return StatusType::SUCCESS;
 }
 
-StatusType Plains::join_herd(int horseId,
-                             int herdId) {//couldnt implement due to lack of herd key in horse
-    if (horseId <= 0 || herdId <= 0) {
-        return StatusType::INVALID_INPUT;
-    }
-    std::shared_ptr<Herd> herdFound = herdTree->find(herdId);
-    std::shared_ptr<Horse> horseFound = horseTree->find(horseId);
-
+StatusType Plains::join_herd(int horseId, int herdId) {
     //find horse
     //Check if m_key =START
     //If so, the horse is not in any herd
@@ -93,18 +86,37 @@ StatusType Plains::join_herd(int horseId,
     //apply add_horse at herd
     //add line: horse->join_herd(this);
 
-    std::shared_ptr<Horse> found_horse;
-    std::shared_ptr<Herd> found_herd;
-
     if (horseId <= 0 || herdId <= 0) {
         return StatusType::INVALID_INPUT;
     }
 
-    if (found_horse->getKey() != START_KEY) {
+    std::shared_ptr<Horse> found_horse = horseTree->find(horseId);
+    if (!found_horse) {
         return StatusType::FAILURE;
     }
 
-    found_herd->addHorse(found_horse);
+    if ( found_horse->getKey() != START_KEY) {
+        return StatusType::FAILURE;
+    }
+
+    std::shared_ptr<Herd> found_herd;
+
+    if (  !herdTree->find(horseId) ) {
+        if( emptyHerdTree->find(horseId) ) {
+            found_herd = emptyHerdTree->find(horseId);
+        } else {
+            return StatusType::FAILURE;
+        }
+    } else {
+        found_herd = herdTree->find(horseId);
+    }
+
+    try {
+        found_herd->addHorse(found_horse);
+    }
+    catch (std::bad_alloc &e) {
+        return StatusType::FAILURE;
+    }
 
     return StatusType::SUCCESS;
 }
@@ -114,23 +126,22 @@ StatusType Plains::follow(int horseId, int horseToFollowId) {
     //chack they are at same herd
     //apply follow(horse2) at horse1
 
-    std::shared_ptr<Horse> found_horse1;
-    std::shared_ptr<Horse> found_horse2;
 
     if (horseId <= 0 || horseToFollowId <= 0 || horseId == horseToFollowId) {
+        return StatusType::INVALID_INPUT;
+    }
+    std::shared_ptr<Horse> horse = horseTree->find(horseId);
+    std::shared_ptr<Horse> horseToFollow = horseTree->find(horseToFollowId);
+
+    if(!horse || !horseToFollow) {
         return StatusType::FAILURE;
     }
 
-    if (found_horse1->getHerd() != found_horse2->getHerd()) {
+    if (horse->getHerd() != horseToFollow->getHerd()) {
         return StatusType::FAILURE;
     }
 
-    if (found_horse1->getKey() == START_KEY || found_horse1->getKey() ==
-                                               START_KEY) {
-        return StatusType::FAILURE;
-    }
-
-    found_horse1->follow(found_horse2);
+    horse->follow(horseToFollow);
 
     return StatusType::SUCCESS;
 }
@@ -142,36 +153,47 @@ StatusType Plains::leave_herd(int horseId) {
     //remove follow from followers- apply leave_herd at Horse
     // update at Horse class
 
-    std::shared_ptr<Horse> found_horse;
-
-    Herd *found_herd = found_horse->getHerd();
-
     if (horseId <= 0) {
         return StatusType::INVALID_INPUT;
     }
 
-    if (found_horse->getKey() == START_KEY ||
-        found_horse->getHerd() == nullptr) {
+    std::shared_ptr<Horse> found_horse = horseTree->find(horseId);
+    if (!found_horse) {
         return StatusType::FAILURE;
     }
 
+    Herd* raw_herd_ptr = found_horse->getHerd();
+    if (!raw_herd_ptr) {
+        return StatusType::FAILURE;
+    }
+
+    std::shared_ptr<Herd> found_herd = std::shared_ptr<Herd>(raw_herd_ptr);
+
     found_herd->removeHorse(horseId);
     found_horse->leave_herd();
+
+    int herdId = found_herd->getId();
+
+    if( found_herd->getSize() < 1) {
+        emptyHerdTree->insert(herdId,found_herd);
+        herdTree->remove(herdId);
+    }
 
     return StatusType::SUCCESS;
 }
 
 
 output_t<int> Plains::get_speed(int horseId) {
-    if (horseId <= 0) {
-        return StatusType::INVALID_INPUT;
-    }
+
     //find horse
     //apply get speed
-    std::shared_ptr<Horse> found_horse;
 
     if (horseId <= 0) {
         return StatusType::INVALID_INPUT;
+    }
+    std::shared_ptr<Horse> found_horse = horseTree->find(horseId);
+    if (!found_horse) {
+        return StatusType::FAILURE;
     }
 
     return found_horse->getSpeed();
@@ -182,21 +204,21 @@ output_t<bool> Plains::leads(int horseId, int otherHorseId) {
     //check if they at the same herd- else return false
     // apply leads at the herd
 
-    std::shared_ptr<Horse> found_horse1;
-    std::shared_ptr<Horse> found_horse2;
-
     if (horseId <= 0 || otherHorseId <= 0 || horseId == otherHorseId) {
+        return StatusType::INVALID_INPUT;
+    }
+    std::shared_ptr<Horse> horse = horseTree->find(horseId);
+    std::shared_ptr<Horse> otherHors = horseTree->find(otherHorseId);
+
+    if(!horse || !otherHors) {
         return StatusType::FAILURE;
     }
-    if (found_horse1->getHerd() != found_horse2->getHerd()) {
-        return false;
-    }
-    if (found_horse1->getKey() == START_KEY ||
-        found_horse2->getKey() == START_KEY) {
+
+    if (horse->getHerd() != otherHors->getHerd()) {
         return false;
     }
 
-    Herd *common_herd = found_horse1->getHerd();
+    Herd *common_herd = horse->getHerd();
 
     return common_herd->leads(horseId, otherHorseId);
 }
@@ -205,15 +227,21 @@ output_t<bool> Plains::can_run_together(int herdId) {
     //find herd
     //apply can_run_together at herd
 
-    std::shared_ptr<Herd> found_herd;
-
-    if (herdId <= 0) {
+    if ( herdId <= 0) {
         return StatusType::INVALID_INPUT;
     }
 
-    if (found_herd->getSize() < 1) {
+    std::shared_ptr<Herd> found_herd = herdTree->find(herdId);
+    if (!found_herd) {
         return StatusType::FAILURE;
     }
 
-    return found_herd->can_run_together();
+    bool answer ;
+    try {
+        answer = found_herd->can_run_together();
+        return answer;
+    }
+    catch (std::bad_alloc &e) {
+        return StatusType::FAILURE;
+    }
 }
