@@ -1,11 +1,11 @@
-//
-// Created by meshi on 19/12/2024.
-//
-
+#pragma once
 #ifndef HERD_H
 #define HERD_H
-#include "Horse.h"
+
 #include <memory>
+#include <utility>
+#include "Horse.h" // אין בעיה לכלול אותו פה
+
 
 class Horse;
 
@@ -14,8 +14,8 @@ struct NodeList {
     std::shared_ptr<Horse> horse;
     NodeList* next;
     NodeList* prev;
-    NodeList( std::shared_ptr<Horse> horse, NodeList* next = nullptr) : horse(horse),
-    next(next), prev(prev)  {};
+    explicit NodeList( std::shared_ptr<Horse> horse, NodeList* next = nullptr,NodeList* prev = nullptr ) :
+    horse(std::move(horse)), next(next), prev(prev)  {};
 };
 
 class Herd {

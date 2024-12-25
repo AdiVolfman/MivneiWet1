@@ -3,6 +3,7 @@
 
 #include "plains25a1.h"
 
+#include "Herd.h"
 #include "Horse.h"
 
 
