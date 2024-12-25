@@ -1,9 +1,10 @@
-//
-// Created by meshi on 19/12/2024.
-//
+
 #include <stdexcept>
 #include "Horse.h"
-#include "Herd.h"
+
+
+int Horse::keyCounter = START_KEY;
+int Horse::horseCounter = START_COUNT;
 
 Horse::Horse( unsigned int id , int speed )
     : m_id(id), m_speed(speed), m_herd(nullptr),m_node(nullptr), m_key(START_KEY), m_leaderKey(START_KEY) {
@@ -15,12 +16,6 @@ Horse::Horse(): m_id(0), m_speed(0), m_herd(nullptr), m_node(nullptr),
           m_key(START_KEY), m_leaderKey(START_KEY), m_myCount(horseCounter) {
      horseCounter++;
 }
-
-
-
-
-int Horse::keyCounter = START_KEY;
-int Horse::horseCounter = START_COUNT;
 
 unsigned int Horse::getId() const {
     return m_id;
