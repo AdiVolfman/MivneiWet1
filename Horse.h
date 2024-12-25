@@ -1,15 +1,14 @@
-//
-// Created by meshi on 19/12/2024.
-//
-
+#pragma once
 #ifndef HORSE_H
 #define HORSE_H
-#include "Herd.h"
+
 #include <memory>
 
 #define START_KEY -1
 #define START_COUNT 1
 
+class Herd;     // הכרזה מוקדמת על Herd
+struct  NodeList; // הכרזה מוקדמת על NodeList
 
 class Herd;
 
