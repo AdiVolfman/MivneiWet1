@@ -14,18 +14,20 @@
 #define PLAINS25WINTER_WET1_H_
 
 #include "wet1util.h"
+#include "Horse.h"
+#include "AVLtree.h"
 
 class Plains {
 private:
-    //
-    // Here you may add anything you want
-    //
-    
+    AVLTree<Horse> *horseTree;
+    AVLTree<Herd> *herdTree;
+    AVLTree<Herd> *emptyHerdTree;
+
 public:
     // <DO-NOT-MODIFY> {
     Plains();
 
-    ~Plains();
+    ~Plains() = default;
 
     StatusType add_herd(int herdId);
 
