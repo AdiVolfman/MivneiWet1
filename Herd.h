@@ -60,6 +60,8 @@ public:
 
     Herd& operator=(const Herd& other);
 
+    void printList() const;
+
 };
 
 #endif //HERD_H

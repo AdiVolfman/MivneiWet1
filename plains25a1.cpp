@@ -105,7 +105,7 @@ StatusType Plains::join_herd(int horseId, int herdId) {
     if (!herdTree->find(herdId)) {
         if (emptyHerdTree->find(herdId)) {
             found_herd = emptyHerdTree->find(herdId);
-            isEmpteyHerd =true;
+            isEmpteyHerd =true ;
         } else {
             return StatusType::FAILURE;
         }
@@ -115,9 +115,10 @@ StatusType Plains::join_herd(int horseId, int herdId) {
 
     try {
         found_herd->addHorse(found_horse);
+
         if(isEmpteyHerd) {
             emptyHerdTree->remove(herdId);
-            herdTree->insert( herdId , found_herd);
+            herdTree->insert( herdId , found_herd );
         }
     }
     catch (std::bad_alloc &e) {
@@ -173,9 +174,14 @@ StatusType Plains::leave_herd(int horseId) {
         return StatusType::FAILURE;
     }
 
-    std::shared_ptr<Herd> found_herd = std::make_shared<Herd>(*raw_herd_ptr);
+    std::shared_ptr<Herd> found_herd(raw_herd_ptr);
 
-    found_herd->removeHorse(horseId);
+    if (!found_herd) {
+        return StatusType::FAILURE;
+    }
+
+    NodeList* horseToRemove = found_horse->getNode();
+    found_herd->removeHorse(horseToRemove);
     found_horse->leave_herd();
 
     int herdId = found_herd->getId();
@@ -250,4 +256,21 @@ output_t<bool> Plains::can_run_together(int herdId) {
     catch (std::bad_alloc &e) {
         return StatusType::FAILURE;
     }
+}
+
+output_t<int> Plains::print_herd(int herdId) {
+
+    //find horse
+    //apply get speed
+
+    if (herdId <= 0) {
+        return StatusType::INVALID_INPUT;
+    }
+    std::shared_ptr<Herd> found_herd = herdTree->find(herdId);
+    if (!found_herd) {
+        return StatusType::FAILURE;
+    }
+
+    found_herd->printList();
+    return StatusType::SUCCESS;
 }
