@@ -175,7 +175,7 @@ StatusType Plains::leave_herd(int horseId) {
         return StatusType::FAILURE;
     }
 //---שגיאה מכאן
-    NodeList* horseToRemove = found_horse->getNode();
+    std::shared_ptr<NodeList> horseToRemove = found_horse->getNode();
     if (!horseToRemove) {
         return StatusType::FAILURE;
     }
