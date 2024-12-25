@@ -280,7 +280,10 @@ Node<T> *AVLTree<T>::find(Node<T> *node, int key) {
 template<typename T>
 shared_ptr<T> AVLTree<T>::find(int key) {
     Node<T> *found = find(this->root, key);
-    return make_shared<T>(found);
+    if (!found) {
+        return nullptr;
+    }
+    return found->val;
 }
 
 template<typename T>

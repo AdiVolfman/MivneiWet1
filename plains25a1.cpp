@@ -32,7 +32,7 @@ StatusType Plains::add_herd(int herdId) {
     if (herdId <= 0) {
         return StatusType::INVALID_INPUT;
     }
-    if (herdTree->find(herdId)) {
+    if (!(herdTree->find(herdId))) {
         return StatusType::FAILURE;
     }
     Herd *h = nullptr;
