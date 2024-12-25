@@ -26,7 +26,7 @@ Herd* Horse::getHerd() const {
     return m_herd;
 }
 
-Node *Horse::getNode() const {
+NodeList *Horse::getNode() const {
     return m_node;
 }
 
@@ -87,7 +87,7 @@ void Horse::leave_herd() {
 }
 
 
-void Horse::join_herd(Herd* newHerd , Node* newNode ) {
+void Horse::join_herd(Herd* newHerd , NodeList* newNode ) {
     if (newHerd == nullptr) {
        throw std::invalid_argument("");
     }
