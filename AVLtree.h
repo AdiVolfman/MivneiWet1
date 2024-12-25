@@ -1,17 +1,19 @@
 #pragma once
 
+#include <memory>
 #include <iostream>
 
 using namespace std;
 
 template<typename T>
 struct Node {
-    T key;
+    int key;
+    std::shared_ptr<T> val;
     Node<T> *left;
     Node<T> *right;
     int height;
 
-    explicit Node(T val);
+    explicit Node(int key, std::shared_ptr<T> val);
     ~Node();
     /*Node<T> &operator=(const Node<T> &other);*/
     template<typename U>
@@ -26,13 +28,14 @@ private:
 
     // Helper methods
     int getHeight(Node<T> *node);
-    Node<T> *insert(Node<T> *node, T key);
-    Node<T> *remove(Node<T> *node, T key);
-    Node<T> *find(Node<T> *node, T key);
+    Node<T> *insert(Node<T> *node, int key, std::shared_ptr<T> val);
+    Node<T> *remove(Node<T> *node, int key);
+    Node<T> *find(Node<T> *node, int key);
     Node<T> *smallestNode(Node<T> *node);
     int getBalanceFactor(Node<T> *node);
     void inOrder(Node<T> *node);
     void preOrder(Node<T> *node);
+
 
     Node<T> *LLrotation(Node<T> *node);
     Node<T> *RRrotation(Node<T> *node);
@@ -40,20 +43,22 @@ private:
     Node<T> *RLrotation(Node<T> *node);
 
 public:
-
+    Node<T> *getRoot() const;
     explicit AVLTree<T>();
-    void insert(T key);
-    void remove(T key);
-    Node<T> *find(T key);
+    void insert(int key, std::shared_ptr<T> val);
+    void remove(int key);
+    shared_ptr<T> find(int key);
     void printInOrder();
     void printPreOrder();
-    Node<T> *getRoot();
     ~AVLTree();
 };
 
 
 template<typename T>
-Node<T>::Node(T val) : key(val), left(nullptr), right(nullptr), height(1) {}
+Node<T>::Node(int key, std::shared_ptr<T> val) : key(key), val(val),
+                                                 left(nullptr),
+                                                 right(nullptr),
+                                                 height(1) {}
 
 
 template<typename T>
@@ -63,13 +68,12 @@ template<typename T>
 Node<T>::~Node() {
     delete left;   // Recursively delete the left subtree
     delete right;  // Recursively delete the right subtree
-    // Note: No need to delete `this`, as that is handled by the calling code.
 }
 
 template<typename T>
 AVLTree<T>::~AVLTree() {
     delete root;  // This will recursively delete all nodes via Node destructor
-    root = nullptr;  // Not strictly necessary, but good practice
+    root = nullptr;
 }
 
 // Definition of the friend function
@@ -90,7 +94,7 @@ Node<T> &Node<T>::operator=(const Node<T> &other) {
     return *this;
 }*/
 template<typename T>
-Node<T> *AVLTree<T>::getRoot() {
+Node<T> *AVLTree<T>::getRoot() const {
     return this->root;
 }
 
@@ -170,20 +174,19 @@ Node<T> *AVLTree<T>::RLrotation(Node<T> *node) {
 
 template<typename T>
 Node<T> *AVLTree<T>::insert(Node<T> *node,
-                            T key) {//only if horse isn't already in tree, recursive function
+                            int key,
+                            std::shared_ptr<T> val) {//only if horse isn't already in tree, recursive function
     if (node == nullptr) {
         try {
-            return new Node(key); // Attempt to allocate memory
-        } catch (const std::bad_alloc &err) { // Catch allocation error
-            std::cerr << "Memory allocation failed: " << err.what()
-                      << std::endl;
-            return nullptr; // Return nullptr to indicate failure
+            return new Node(key, val); // Attempt to allocate memory
+        } catch (const std::bad_alloc &e) { // Catch allocation error
+            throw std::bad_alloc();
         }
     }
     if (key < node->key) {
-        node->left = insert(node->left, key);//recursion to the left
+        node->left = insert(node->left, key, val);//recursion to the left
     } else if (key > node->key) {
-        node->right = insert(node->right, key);//recursion to the right
+        node->right = insert(node->right, key, val);//recursion to the right
     } else {//key == node->key
         return node;
     }
@@ -211,7 +214,8 @@ Node<T> *AVLTree<T>::insert(Node<T> *node,
 
 template<typename T>
 Node<T> *
-AVLTree<T>::remove(Node<T> *node, T key) {// DONT FORGET TO DELETE ALLOCATIONS!!
+AVLTree<T>::remove(Node<T> *node,
+                   int key) {// DONT FORGET TO DELETE ALLOCATIONS!!
     if (node == nullptr) { return node; }//key not found
     if (key < node->key) {
         node->left = remove(node->left, key);//recurse to the left subtree
@@ -235,6 +239,7 @@ AVLTree<T>::remove(Node<T> *node, T key) {// DONT FORGET TO DELETE ALLOCATIONS!!
             Node<T> *smallest = smallestNode(
                     node->right);//find the smallest leaf
             node->key = smallest->key;//switch between nodes, skipping relations too.
+            node->val = smallest->val;
             // node->key = smallest->key;//switching between the keys
             node->right = remove(node->right,
                                  smallest->key);//remove the leaf
@@ -263,7 +268,7 @@ AVLTree<T>::remove(Node<T> *node, T key) {// DONT FORGET TO DELETE ALLOCATIONS!!
 }
 
 template<typename T>
-Node<T> *AVLTree<T>::find(Node<T> *node, T key) {
+Node<T> *AVLTree<T>::find(Node<T> *node, int key) {
     if (!node) { return nullptr; }
     if (node->key == key) { return node; }
     if (key < node->key) {
@@ -273,17 +278,20 @@ Node<T> *AVLTree<T>::find(Node<T> *node, T key) {
 }
 
 template<typename T>
-Node<T> *AVLTree<T>::find(T key) {
-    return find(this->root, key);
+shared_ptr<T> AVLTree<T>::find(int key) {
+    return find(this->root, key)->val;
 }
 
 template<typename T>
-void AVLTree<T>::insert(T key) {
-    this->root = insert(this->root, key);
+void AVLTree<T>::insert(int key, std::shared_ptr<T> val) {
+    if (this->find(key, val)) {
+        return;
+    }
+    this->root = insert(this->root, key, val);
 }
 
 template<typename T>
-void AVLTree<T>::remove(T key) {
+void AVLTree<T>::remove(int key) {
     root = remove(this->root, key);
 }
 
