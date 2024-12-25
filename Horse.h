@@ -17,7 +17,7 @@ private:
     int m_speed;
     std::weak_ptr<Horse> m_leader;
     std::shared_ptr<Herd> m_herd;
-    NodeList* m_node;
+    std::weak_ptr<NodeList> m_node;
     int m_key;
     int m_leaderKey;
     int m_myCount;
@@ -40,11 +40,13 @@ public:
 
     void setHerd( std::shared_ptr<Herd> newHerd);
 
+    void setNode (std::weak_ptr<NodeList> newNode);
+
     const std::weak_ptr<Horse> getLeader() const;
 
     std::shared_ptr<Herd> getHerd() const;
 
-    NodeList* getNode() const;
+    std::shared_ptr<NodeList>  getNode() const;
 
     int getKey() const;
 
@@ -64,7 +66,7 @@ public:
 
     bool isFollow (const std::shared_ptr<Horse> &other);
 
-    void join_herd(std::shared_ptr<Herd> newHerd,NodeList* newNode);
+    void join_herd(std::shared_ptr<Herd> newHerd,std::shared_ptr<NodeList> newNode);
 
     void follow (const std::shared_ptr<Horse> &other);
 

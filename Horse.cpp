@@ -7,12 +7,12 @@ int Horse::keyCounter = START_KEY;
 int Horse::horseCounter = START_COUNT;
 
 Horse::Horse( unsigned int id , int speed )
-    : m_id(id), m_speed(speed), m_herd(nullptr),m_node(nullptr), m_key(START_KEY), m_leaderKey(START_KEY) {
+    : m_id(id), m_speed(speed), m_herd(nullptr), m_key(START_KEY), m_leaderKey(START_KEY) {
     m_myCount = horseCounter;
     horseCounter++;
 }
 
-Horse::Horse(): m_id(0), m_speed(0), m_herd(nullptr), m_node(nullptr),
+Horse::Horse(): m_id(0), m_speed(0), m_herd(nullptr),
           m_key(START_KEY), m_leaderKey(START_KEY), m_myCount(horseCounter) {
      horseCounter++;
 }
@@ -29,8 +29,8 @@ std::shared_ptr<Herd> Horse::getHerd() const {
     return m_herd;
 }
 
-NodeList *Horse::getNode() const {
-    return m_node;
+ std::shared_ptr<NodeList> Horse::getNode() const {
+    return m_node.lock();
 }
 
 
@@ -42,13 +42,18 @@ void Horse::setLeader(const std::weak_ptr<Horse>& leader) {
     m_leader = leader;
 }
 
+void Horse::setNode(std::weak_ptr<NodeList> newNode) {
+    m_node=newNode;
+}
+
+
 void Horse::leave() {
 
-     m_herd = nullptr;
+    m_herd.reset();
     m_leaderKey = START_KEY;
     m_key = START_KEY;
     m_leader.reset();
-    m_node = nullptr;
+    m_node.reset();
 
 }
 
@@ -87,7 +92,7 @@ void Horse::setLeaderKey(int leaderId) {
     m_leaderKey = leaderId;
 }
 
-void Horse::join_herd(std::shared_ptr<Herd> newHerd , NodeList* newNode ) {
+void Horse::join_herd(std::shared_ptr<Herd> newHerd , std::shared_ptr<NodeList> newNode ) {
     m_herd = newHerd;
     m_node = newNode;
     setKey();
