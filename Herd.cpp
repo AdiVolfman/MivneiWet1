@@ -43,7 +43,7 @@ void Herd::addHorse(std::shared_ptr<Horse> &horse) {
         tail = new_HorseNode;
     }
     m_size++;;
-    horse->join_herd( this, new_HorseNode );
+    horse->join_herd(std::shared_ptr<Herd>(this), new_HorseNode );
 
 }
 
@@ -126,6 +126,7 @@ bool Herd::leads (int horseId, int otherHorseId) {
         cur_node = cur_node->next;
     }
 
+    std::shared_ptr<Horse> circleCheck = current;
     while (current) {
         if(current -> isFollow(leader)) {
             found = true;
@@ -133,6 +134,10 @@ bool Herd::leads (int horseId, int otherHorseId) {
         }
 
         std::shared_ptr<Horse> next = current->getLeader().lock();
+
+        if(circleCheck==next) {
+            break;
+        }
 
         if(current->isFollow(next)) {
             current = next;
