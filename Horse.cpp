@@ -11,6 +11,14 @@ Horse::Horse( unsigned int id , int speed )
     horseCounter++;
 }
 
+Horse::Horse(): m_id(0), m_speed(0), m_herd(nullptr), m_node(nullptr),
+          m_key(START_KEY), m_leaderKey(START_KEY), m_myCount(horseCounter) {
+     horseCounter++;
+}
+
+
+
+
 int Horse::keyCounter = START_KEY;
 int Horse::horseCounter = START_COUNT;
 

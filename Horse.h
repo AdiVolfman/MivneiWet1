@@ -32,6 +32,8 @@ public:
 
     Horse(unsigned int id, int speed);
 
+    Horse ();
+
     unsigned int getId() const;
 
     int getSpeed() const;

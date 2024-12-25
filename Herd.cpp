@@ -6,6 +6,8 @@
 
 Herd::Herd(unsigned int id) : m_id(id),m_size(SIZE0),head(nullptr), tail(nullptr) {}
 
+Herd::Herd():m_id(0),m_size(SIZE0),head(nullptr), tail(nullptr) {}
+
 Herd::~Herd() {
     while (head) {
         NodeList* cur_node = head;
