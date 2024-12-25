@@ -4,7 +4,7 @@
 
 #include <memory>
 #include <utility>
-#include "Horse.h" // אין בעיה לכלול אותו פה
+#include "Horse.h"
 
 
 class Horse;

@@ -1,6 +1,4 @@
-//
-// Created by meshi on 19/12/2024.
-//
+
 #include "Herd.h"
 #define SIZE0 0
 
