@@ -279,12 +279,13 @@ Node<T> *AVLTree<T>::find(Node<T> *node, int key) {
 
 template<typename T>
 shared_ptr<T> AVLTree<T>::find(int key) {
-    return find(this->root, key)->val;
+    Node<T> *found = find(this->root, key)->val;
+    return make_shared<T>(found);
 }
 
 template<typename T>
 void AVLTree<T>::insert(int key, std::shared_ptr<T> val) {
-    if (this->find(key, val)) {
+    if (this->find(key)) {
         return;
     }
     this->root = insert(this->root, key, val);
@@ -292,7 +293,7 @@ void AVLTree<T>::insert(int key, std::shared_ptr<T> val) {
 
 template<typename T>
 void AVLTree<T>::remove(int key) {
-    root = remove(this->root, key);
+    this->root = remove(this->root, key);
 }
 
 template<typename T>
