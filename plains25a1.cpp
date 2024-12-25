@@ -45,7 +45,6 @@ StatusType Plains::add_herd(int herdId) {
     std::shared_ptr<Herd> sharedPtr = std::make_shared<Herd>(*h);
     herdTree->insert(herdId, sharedPtr);
     return StatusType::SUCCESS;
-
 }
 
 StatusType Plains::remove_herd(int herdId) {
@@ -162,9 +161,11 @@ StatusType Plains::leave_herd(int horseId) {
 
 output_t<int> Plains::get_speed(int horseId)
 {
+    if ( horseId <= 0) {
+        return StatusType::INVALID_INPUT;
+    }
     //find horse
     //apply get speed
-
     std::shared_ptr<Horse> found_horse ;
 
     if ( horseId <= 0) {
