@@ -91,9 +91,6 @@ void Horse::leave_herd() {
 
 
 void Horse::join_herd(Herd* newHerd , NodeList* newNode ) {
-    if (newHerd == nullptr) {
-       throw std::invalid_argument("");
-    }
     m_herd = newHerd;
     m_node = newNode;
     setKey();
