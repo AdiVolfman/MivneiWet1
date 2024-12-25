@@ -34,6 +34,8 @@ public:
 
     Herd(unsigned int id);
 
+    Herd();
+
     ~Herd();
 
     unsigned int getId() const;
