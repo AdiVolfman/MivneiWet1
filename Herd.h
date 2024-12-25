@@ -10,11 +10,11 @@
 class Horse;
 
 
-struct Node {
+struct NodeList {
     std::shared_ptr<Horse> horse;
-    Node* next;
-    Node* prev;
-    Node( std::shared_ptr<Horse> horse, Node* next = nullptr) : horse(horse),
+    NodeList* next;
+    NodeList* prev;
+    NodeList( std::shared_ptr<Horse> horse, NodeList* next = nullptr) : horse(horse),
     next(next), prev(prev)  {};
 };
 
@@ -25,9 +25,9 @@ private:
 
     int m_size;
 
-    Node* head;
+    NodeList* head;
 
-    Node* tail;
+    NodeList* tail;
 
 
 public:
@@ -42,7 +42,7 @@ public:
 
     void removeHorse(unsigned int horseId);
 
-    void removeHorse(Node* nodeToRemove);
+    void removeHorse(NodeList* nodeToRemove);
 
     bool leads (int horseId, int otherHorseId);
 
