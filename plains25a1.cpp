@@ -101,14 +101,14 @@ StatusType Plains::join_herd(int horseId, int herdId) {
 
     std::shared_ptr<Herd> found_herd;
 
-    if (!herdTree->find(horseId)) {
-        if (emptyHerdTree->find(horseId)) {
-            found_herd = emptyHerdTree->find(horseId);
+    if (!herdTree->find(herdId)) {
+        if (emptyHerdTree->find(herdId)) {
+            found_herd = emptyHerdTree->find(herdId);
         } else {
             return StatusType::FAILURE;
         }
     } else {
-        found_herd = herdTree->find(horseId);
+        found_herd = herdTree->find(herdId);
     }
 
     try {
@@ -167,7 +167,7 @@ StatusType Plains::leave_herd(int horseId) {
         return StatusType::FAILURE;
     }
 
-    std::shared_ptr<Herd> found_herd = std::shared_ptr<Herd>(raw_herd_ptr);
+    std::shared_ptr<Herd> found_herd = std::make_shared<Herd>(*raw_herd_ptr);
 
     found_herd->removeHorse(horseId);
     found_horse->leave_herd();
