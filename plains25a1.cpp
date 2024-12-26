@@ -95,7 +95,7 @@ StatusType Plains::join_herd(int horseId, int herdId) {
         return StatusType::FAILURE;
     }
 
-    if (found_horse->getHerd()) {
+    if (found_horse->getHerd()||found_horse->getKey()!=START_KEY) {
         return StatusType::FAILURE;
     }
 
@@ -114,7 +114,7 @@ StatusType Plains::join_herd(int horseId, int herdId) {
     }
 
     try {
-        found_herd->addHorse(found_horse);
+        found_herd->addHorse(found_herd, found_horse);
 
         if(isEmpteyHerd) {
             emptyHerdTree->remove(herdId);
@@ -164,18 +164,18 @@ StatusType Plains::leave_herd(int horseId) {
         return StatusType::INVALID_INPUT;
     }
 
-    std::shared_ptr<Horse> found_horse = horseTree->find(horseId);
+    const std::shared_ptr<Horse>& found_horse = horseTree->find(horseId);
     if (!found_horse) {
         return StatusType::FAILURE;
     }
 
-    std::shared_ptr<Herd> found_herd = found_horse->getHerd();
+    const std::shared_ptr<Herd>& found_herd = found_horse->getHerd();
 
     if (!found_herd) {
         return StatusType::FAILURE;
     }
 //---שגיאה מכאן
-    std::shared_ptr<NodeList> horseToRemove = found_horse->getNode();
+    const std::shared_ptr<NodeList>& horseToRemove = found_horse->getNode();
     if (!horseToRemove) {
         return StatusType::FAILURE;
     }
@@ -183,7 +183,7 @@ StatusType Plains::leave_herd(int horseId) {
     found_herd->removeHorse(horseToRemove);
     found_horse->leave();
 
-    int herdId = found_herd->getId();
+    const int herdId = found_herd->getId();
 
     if (found_herd->getSize() < 1) {
         emptyHerdTree->insert(herdId, found_herd);

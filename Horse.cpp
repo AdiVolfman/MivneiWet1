@@ -7,12 +7,12 @@ int Horse::keyCounter = START_KEY;
 int Horse::horseCounter = START_COUNT;
 
 Horse::Horse( unsigned int id , int speed )
-    : m_id(id), m_speed(speed), m_herd(nullptr), m_key(START_KEY), m_leaderKey(START_KEY) {
+    : m_id(id), m_speed(speed), m_key(START_KEY), m_leaderKey(START_KEY) {
     m_myCount = horseCounter;
     horseCounter++;
 }
 
-Horse::Horse(): m_id(0), m_speed(0), m_herd(nullptr),
+Horse::Horse(): m_id(0), m_speed(0),
           m_key(START_KEY), m_leaderKey(START_KEY), m_myCount(horseCounter) {
      horseCounter++;
 }
@@ -26,26 +26,35 @@ int Horse::getSpeed() const {
 }
 
 std::shared_ptr<Herd> Horse::getHerd() const {
-    return m_herd;
+    if (m_herd.expired()) {
+        return nullptr;
+    }
+    return m_herd.lock();
 }
 
  std::shared_ptr<NodeList> Horse::getNode() const {
+    if (m_node.expired()) {
+        return nullptr;
+    }
     return m_node.lock();
 }
 
 
-void Horse::setHerd(std::shared_ptr<Herd> newHerd) {
+void Horse::setHerd(const std::shared_ptr<Herd>& newHerd) {
     m_herd = newHerd;
 }
 
-void Horse::setLeader(const std::weak_ptr<Horse>& leader) {
+void Horse::setLeader(const std::shared_ptr<Horse>& leader) {
     m_leader = leader;
 }
 
-void Horse::setNode(std::weak_ptr<NodeList> newNode) {
+void Horse::setNode(const std::shared_ptr<NodeList> &newNode) {
     m_node=newNode;
 }
 
+void Horse::resetNode() {
+    m_node.reset();
+}
 
 void Horse::leave() {
 
@@ -57,8 +66,11 @@ void Horse::leave() {
 
 }
 
-const std::weak_ptr<Horse> Horse::getLeader() const {
-    return m_leader;
+const std::shared_ptr<Horse> Horse::getLeader() const {
+    if (m_leader.expired()) {
+        return nullptr;
+    }
+    return m_leader.lock();
 }
 
 int Horse::getKey() const {
@@ -109,6 +121,9 @@ bool Horse::operator>(const Horse& other) const {
 
 
 bool Horse::isFollow(const std::shared_ptr<Horse>& other) {
+    if (m_leader.expired()) {
+        return false;
+    }
     auto leader = m_leader.lock();
     if (other && leader && leader == other && this->getLeaderKey() == other->getKey()) {
         return true;

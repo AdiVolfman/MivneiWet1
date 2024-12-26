@@ -41,7 +41,8 @@ public:
 
     unsigned int getId() const;
 
-    void addHorse(std::shared_ptr<Horse> &horse);
+    std::shared_ptr<NodeList> addHorse(std::shared_ptr<Horse> &horse);
+    void addHorse(const std::shared_ptr<Herd> &herd, std::shared_ptr<Horse> &horse);
 
     void removeHorse(unsigned int horseId);
 
@@ -65,5 +66,7 @@ public:
     void printList() const;
 
 };
+
+
 
 #endif //HERD_H
