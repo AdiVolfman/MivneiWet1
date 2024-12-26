@@ -3,17 +3,17 @@
 #include "Horse.h"
 
 
-int Horse::keyCounter = START_KEY;
-int Horse::horseCounter = START_COUNT;
+long Horse::keyCounter = START_KEY;
+long Horse::horseCounter = START_COUNT;
 
 Horse::Horse( unsigned int id , int speed )
-    : m_id(id), m_speed(speed), m_key(START_KEY), m_leaderKey(START_KEY) {
+    : m_id(id), m_speed(speed), m_key(START_KEY) ,m_circleCheck(START_CIRCLE_CHECK), m_leaderKey(START_KEY) {
     m_myCount = horseCounter;
     horseCounter++;
 }
 
 Horse::Horse(): m_id(0), m_speed(0),
-          m_key(START_KEY), m_leaderKey(START_KEY), m_myCount(horseCounter) {
+          m_key(START_KEY), m_leaderKey(START_KEY),m_circleCheck(START_CIRCLE_CHECK), m_myCount(horseCounter) {
      horseCounter++;
 }
 
@@ -24,6 +24,11 @@ unsigned int Horse::getId() const {
 int Horse::getSpeed() const {
     return m_speed;
 }
+
+long Horse::getCircleCheck() const {
+    return m_circleCheck;
+}
+
 
 std::shared_ptr<Herd> Horse::getHerd() const {
     if (m_herd.expired()) {
@@ -39,6 +44,11 @@ std::shared_ptr<Herd> Horse::getHerd() const {
     return m_node.lock();
 }
 
+
+void Horse::setCircleCheck(long newCircleCheck) {
+
+    m_circleCheck=newCircleCheck;
+}
 
 void Horse::setHerd(const std::shared_ptr<Herd>& newHerd) {
     m_herd = newHerd;

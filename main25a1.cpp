@@ -17,15 +17,13 @@ void print(string cmd, StatusType res);
 void print(string cmd, output_t<int> res);
 void print(string cmd, output_t<bool> res);
 
-/*
 int main()
 {
-    
+
     int d1, d2;
 
     // Init
     Plains *obj = new Plains();
-
 
     // Execute all commands in file
     string op;
@@ -33,7 +31,6 @@ int main()
     {
         if (!op.compare("add_herd")) {
             cin >> d1;
-            std::cout <<  "2";
             print(op, obj->add_herd(d1));
         } else if (!op.compare("remove_herd")) {
             cin >> d1;
@@ -106,4 +103,3 @@ void print(string cmd, output_t<bool> res)
         cout << cmd << ": " << StatusTypeStr[(int) res.status()] << endl;
     }
 }
-*/

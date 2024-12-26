@@ -7,6 +7,7 @@
 
 #define START_KEY -1
 #define START_COUNT 1
+#define START_CIRCLE_CHECK 0
 
 class Herd;     // הכרזה מוקדמת על Herd
 struct  NodeList; // הכרזה מוקדמת על NodeList
@@ -21,8 +22,9 @@ private:
     int m_key;
     int m_leaderKey;
     int m_myCount;
-    static int keyCounter ;
-    static int horseCounter ;
+    long m_circleCheck ;
+    static long keyCounter ;
+    static long horseCounter ;
 
 
 
@@ -51,6 +53,8 @@ public:
 
     int getKey() const;
 
+    long getCircleCheck() const;
+
     int getMyCount() const;
 
     int getHorseCounter() const;
@@ -58,6 +62,8 @@ public:
     int getkeyCounter() const;
 
     int getLeaderKey() const;
+
+    void setCircleCheck(long newCircleCheck);
 
     void setKey();
 

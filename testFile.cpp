@@ -8,7 +8,8 @@ void print(string cmd, StatusType res);
 void print(string cmd, output_t<int> res);
 void print(string cmd, output_t<bool> res);
 
-int main() {
+/*
+int main()
 
 
     /*
@@ -44,7 +45,7 @@ int main() {
     if(herd1.can_run_together()) {
         cout<< "run" <<endl;
     }
-    */
+
 
 
     Plains *obj = new Plains();
@@ -122,3 +123,4 @@ void print(string cmd, output_t<bool> res) {
         cout << cmd << ": " << StatusTypeStr[(int)res.status()] << endl;
     }
 }
+*/

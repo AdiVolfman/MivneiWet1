@@ -48,11 +48,11 @@ public:
 
     void removeHorse(std::shared_ptr<NodeList> nodeToRemove);
 
-    bool leads (int horseId, int otherHorseId);
+    bool leads (int horseId, int otherHorseId, long circleCheck);
 
-    bool can_run_together () const;
+    bool can_run_together ( long circleCheck )  const;
 
-    bool hasCycle() const;
+    bool hasCycle( long circleCheck ) const;
 
     int getSize
     () const;

@@ -115,7 +115,7 @@ void Herd::removeHorse(std::shared_ptr<NodeList> nodeToRemove) {
 }
 
 
-bool Herd::leads(int horseId, int otherHorseId) {
+bool Herd::leads(int horseId, int otherHorseId , long circleCheck ) {
     bool found = false;
     std::shared_ptr<NodeList> cur_node = head;
     std::shared_ptr<Horse> current = nullptr;
@@ -131,7 +131,6 @@ bool Herd::leads(int horseId, int otherHorseId) {
         cur_node = cur_node->next;
     }
 
-    std::shared_ptr<Horse> circleCheck = current;
     while (current) {
         if (current->isFollow(leader)) {
             found = true;
@@ -140,11 +139,13 @@ bool Herd::leads(int horseId, int otherHorseId) {
 
         std::shared_ptr<Horse> next = current->getLeader();
 
-        if (circleCheck == next) {
+        if ( current->getCircleCheck() == circleCheck ) {
             break;
+        } else {
+            current->setCircleCheck(circleCheck);
         }
 
-        if (current->isFollow(next)) {
+        if (next && current->isFollow(next)) {
             current = next;
         } else {
             break;
@@ -153,7 +154,7 @@ bool Herd::leads(int horseId, int otherHorseId) {
     return found;
 }
 
-bool Herd::can_run_together() const {
+bool Herd::can_run_together( long circleCheck ) const {
     std::shared_ptr<NodeList> cur_node = head;
     std::shared_ptr<NodeList> firstRoot = nullptr;
     std::shared_ptr<NodeList> anotherRoot = nullptr;
@@ -175,46 +176,38 @@ bool Herd::can_run_together() const {
         return false;
     }
 
-    if (this->hasCycle()) {
+    if (this->hasCycle( circleCheck)) {
         return false;
     }
 
     return true;
 }
 
-bool Herd::hasCycle() const {
-    int arrSize = head->horse->getHorseCounter() + 1;
-    bool *visited = nullptr;
 
-    try {
-        visited = new bool[arrSize]();
-    } catch (const std::bad_alloc &e) {
-        throw;
-    }
+bool Herd::hasCycle( long circleCheck ) const {
 
     std::shared_ptr<NodeList> cur_node = head;
 
     while (cur_node) {
         std::shared_ptr<Horse> cur_horse = cur_node->horse;
 
-        if (visited[cur_horse->getMyCount()]) {
+        if ( cur_horse->getCircleCheck()==circleCheck ) {
             cur_node = cur_node->next;
             continue;
         }
 
-        while (cur_horse) {
+        while ( cur_horse ) {
             std::shared_ptr<Horse> next = cur_horse->getLeader();
 
-            if (next && next == cur_node->horse) {
-                delete[] visited;
+            if (next && next == cur_node->horse && cur_horse->isFollow(next)) {
                 return true;
             }
 
-            if (visited[cur_horse->getMyCount()]) {
+            if ( cur_horse->getCircleCheck() == circleCheck ) {
                 break;
             }
 
-            visited[cur_horse->getMyCount()] = true;
+            cur_horse->setCircleCheck(circleCheck);
 
             if (next && cur_horse->isFollow(next)) {
                 cur_horse = next;
@@ -224,10 +217,8 @@ bool Herd::hasCycle() const {
         }
         cur_node = cur_node->next;
     }
-    delete[] visited;
     return false;
 }
-
 
 bool Herd::operator<(const Herd &other) const {
     return m_id < other.m_id;
@@ -236,33 +227,6 @@ bool Herd::operator<(const Herd &other) const {
 bool Herd::operator>(const Herd &other) const {
     return m_id > other.m_id;
 }
-
-// Herd &Herd::operator=(const Herd &other) {
-//     if (this == &other) {
-//         return *this;
-//     }
-//     try {
-//         m_id = other.m_id;
-//
-//         while (head) {
-//             std::shared_ptr<NodeList> cur_node = head;
-//             head = head->next;
-//         }
-//
-//         tail = nullptr;
-//         m_size = SIZE0;
-//
-//         std::shared_ptr<NodeList> cur_other = other.head;
-//         while (cur_other) {
-//             addHorse(cur_other->horse); // Reuse the addHorse method
-//             cur_other = cur_other->next;
-//         }
-//     } catch (const std::bad_alloc &) {
-//         throw;
-//     }
-//
-//     return *this;
-// }
 
 void Herd::printList() const {
     std::shared_ptr<NodeList> current = head;

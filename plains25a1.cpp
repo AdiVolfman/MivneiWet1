@@ -6,6 +6,7 @@
 #include "Herd.h"
 #include "Horse.h"
 
+long Plains::circleCheck = START_KEY;
 
 Plains::Plains() {
     try {
@@ -52,9 +53,10 @@ StatusType Plains::remove_herd(int herdId) {
     if (herdId <= 0) {
         return StatusType::INVALID_INPUT;
     }
-    if ((emptyHerdTree->find(herdId)) != nullptr) {
+    if (!(emptyHerdTree->find(herdId))) {
         return StatusType::FAILURE;
     }
+
     emptyHerdTree->remove(herdId);
     return StatusType::SUCCESS;
 }
@@ -144,7 +146,8 @@ StatusType Plains::follow(int horseId, int horseToFollowId) {
         return StatusType::FAILURE;
     }
 
-    if (horse->getHerd() != horseToFollow->getHerd()) {
+    if (horse->getHerd() != horseToFollow->getHerd() || horseToFollow->getKey()==START_KEY
+        || horse->getKey()==START_KEY ) {
         return StatusType::FAILURE;
     }
 
@@ -196,18 +199,22 @@ StatusType Plains::leave_herd(int horseId) {
 
 output_t<int> Plains::get_speed(int horseId) {
 
-    //find horse
-    //apply get speed
-
-    if (horseId <= 0) {
+    if (horseId < 1 ) {
         return StatusType::INVALID_INPUT;
     }
-    std::shared_ptr<Horse> found_horse = horseTree->find(horseId);
-    if (!found_horse) {
+
+    std::shared_ptr<Horse> found_horse ;
+    if(!horseTree->find(horseId)) {
+        return StatusType::FAILURE;
+
+    }
+   found_horse = horseTree->find(horseId);
+    if(!found_horse) {
         return StatusType::FAILURE;
     }
+    int answer = found_horse->getSpeed();
+    return answer;
 
-    return found_horse->getSpeed();
 }
 
 output_t<bool> Plains::leads(int horseId, int otherHorseId) {
@@ -230,8 +237,10 @@ output_t<bool> Plains::leads(int horseId, int otherHorseId) {
     }
 
     std::shared_ptr<Herd> common_herd = horse->getHerd();
-
-    return common_herd->leads(horseId, otherHorseId);
+    if(!common_herd) {
+        return false;
+    }
+    return common_herd->leads(horseId, otherHorseId,circleCheck++);
 }
 
 output_t<bool> Plains::can_run_together(int herdId) {
@@ -249,7 +258,7 @@ output_t<bool> Plains::can_run_together(int herdId) {
 
     bool answer;
     try {
-        answer = found_herd->can_run_together();
+        answer = found_herd->can_run_together( circleCheck++ );
         return answer;
     }
     catch (std::bad_alloc &e) {
