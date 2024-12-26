@@ -16,7 +16,7 @@ private:
     unsigned int m_id;
     int m_speed;
     std::weak_ptr<Horse> m_leader;
-    std::shared_ptr<Herd> m_herd;
+    std::weak_ptr<Herd> m_herd;
     std::weak_ptr<NodeList> m_node;
     int m_key;
     int m_leaderKey;
@@ -30,7 +30,9 @@ public:
 
     Horse(unsigned int id, int speed);
 
-    Horse ();
+    Horse();
+
+    ~Horse();
 
     unsigned int getId() const;
 

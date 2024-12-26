@@ -94,10 +94,16 @@ StatusType Plains::join_herd(int horseId, int herdId) {
     if (!found_horse) {
         return StatusType::FAILURE;
     }
+/*
+    if (found_horse->getKey()!=START_KEY) {
+        return StatusType::FAILURE;
+    }
+*/
 
     if (found_horse->getHerd()) {
         return StatusType::FAILURE;
     }
+
 
     std::shared_ptr<Herd> found_herd;
     bool isEmpteyHerd=false;

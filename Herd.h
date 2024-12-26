@@ -26,9 +26,9 @@ private:
 
     int m_size;
 
-     std::shared_ptr<NodeList> head;
+    std::shared_ptr<NodeList> head;
 
-     std::shared_ptr<NodeList> tail;
+    std::shared_ptr<NodeList> tail;
 
 
 public:
@@ -41,7 +41,7 @@ public:
 
     unsigned int getId() const;
 
-    void addHorse(std::shared_ptr<Horse> &horse);
+    void addHorse(const std::shared_ptr<Horse> &horse);
 
     void removeHorse(unsigned int horseId);
 

@@ -23,7 +23,7 @@ int Herd::getSize() const {
 }
 
 
-void Herd::addHorse(std::shared_ptr<Horse> &horse) {
+void Herd::addHorse(const std::shared_ptr<Horse> &horse) {
 
     std::shared_ptr<NodeList> new_HorseNode = nullptr;
 
@@ -41,8 +41,9 @@ void Herd::addHorse(std::shared_ptr<Horse> &horse) {
         new_HorseNode->prev = tail;
         tail = new_HorseNode;
     }
-    m_size++;;
-    horse->join_herd(std::shared_ptr<Herd>(this), new_HorseNode );
+    m_size++;
+    auto a = std::shared_ptr<Herd>(this);
+    horse->join_herd(a, new_HorseNode );
 
 }
 
@@ -282,6 +283,8 @@ void Herd::printList() const {
     }
     std::cout << std::endl;
 }
+
+
 
 
 
