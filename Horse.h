@@ -15,9 +15,9 @@ class Horse {
 private:
     unsigned int m_id;
     int m_speed;
-    std::weak_ptr<Horse> m_leader;
-    std::weak_ptr<Herd> m_herd;
-    std::weak_ptr<NodeList> m_node;
+    std::shared_ptr<Horse> m_leader;
+    std::shared_ptr<Herd>  m_herd;
+    NodeList* m_node;
     int m_key;
     int m_leaderKey;
     int m_myCount;
@@ -30,25 +30,23 @@ public:
 
     Horse(unsigned int id, int speed);
 
-    Horse();
-
-    ~Horse();
+    Horse ();
 
     unsigned int getId() const;
 
     int getSpeed() const;
 
-    void setLeader(const std::weak_ptr<Horse> &leader);
+    void setLeader( std::shared_ptr<Horse>  leader);
 
     void setHerd( std::shared_ptr<Herd> newHerd);
 
-    void setNode (std::weak_ptr<NodeList> newNode);
+    void setNode (NodeList* newNode);
 
-    const std::weak_ptr<Horse> getLeader() const;
+    std::shared_ptr<Horse>  getLeader() const;
 
     std::shared_ptr<Herd> getHerd() const;
 
-    std::shared_ptr<NodeList>  getNode() const;
+    NodeList*  getNode() const;
 
     int getKey() const;
 
@@ -66,11 +64,11 @@ public:
 
     void setLeaderKey(int leaderId);
 
-    bool isFollow (const std::shared_ptr<Horse> &other);
+    bool isFollow ( std::shared_ptr<Horse> other);
 
-    void join_herd(std::shared_ptr<Herd> newHerd,std::shared_ptr<NodeList> newNode);
+    void join_herd(std::shared_ptr<Herd> newHerd,NodeList* newNode);
 
-    void follow (const std::shared_ptr<Horse> &other);
+    void follow ( std::shared_ptr<Horse> other);
 
     bool operator<(const Horse& other) const;
 

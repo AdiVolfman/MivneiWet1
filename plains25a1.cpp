@@ -94,16 +94,10 @@ StatusType Plains::join_herd(int horseId, int herdId) {
     if (!found_horse) {
         return StatusType::FAILURE;
     }
-/*
-    if (found_horse->getKey()!=START_KEY) {
-        return StatusType::FAILURE;
-    }
-*/
 
     if (found_horse->getHerd()) {
         return StatusType::FAILURE;
     }
-
 
     std::shared_ptr<Herd> found_herd;
     bool isEmpteyHerd=false;
@@ -181,7 +175,7 @@ StatusType Plains::leave_herd(int horseId) {
         return StatusType::FAILURE;
     }
 //---שגיאה מכאן
-    std::shared_ptr<NodeList> horseToRemove = found_horse->getNode();
+    NodeList* horseToRemove = found_horse->getNode();
     if (!horseToRemove) {
         return StatusType::FAILURE;
     }

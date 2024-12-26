@@ -9,7 +9,7 @@ Herd::Herd():m_id(0),m_size(SIZE0),head(nullptr), tail(nullptr) {}
 
 Herd::~Herd() {
     while (head) {
-        std::shared_ptr<NodeList> cur_node = head;
+        NodeList* cur_node = head;
         head = head->next;
     }
 }
@@ -23,27 +23,30 @@ int Herd::getSize() const {
 }
 
 
-void Herd::addHorse(const std::shared_ptr<Horse> &horse) {
+void Herd::addHorse(std::shared_ptr<Horse> &horse) {
 
-    std::shared_ptr<NodeList> new_HorseNode = nullptr;
+    NodeList* new_HorseNode = nullptr;
 
     try {
-        new_HorseNode = std::make_shared<NodeList>(horse);
+        new_HorseNode = new NodeList (horse);
     } catch (const std::bad_alloc& e) {
         throw;
     }
-
     if (!head) {
         head = new_HorseNode;
         tail = new_HorseNode;
-    }  else {
+    }  else if (!tail) {
+        head = new_HorseNode;
+        tail = new_HorseNode;
+    } else {
         tail->next = new_HorseNode;
         new_HorseNode->prev = tail;
         tail = new_HorseNode;
     }
-    m_size++;
-    auto a = std::shared_ptr<Herd>(this);
-    horse->join_herd(a, new_HorseNode );
+
+    m_size++;;
+    std::shared_ptr<Herd> current_herd = std::make_shared<Herd>(*this);
+    horse->join_herd (current_herd, new_HorseNode );
 
 }
 
@@ -78,39 +81,39 @@ void Herd::removeHorse(unsigned int horseId) {
 }
 */
 
-void Herd::removeHorse(std::shared_ptr<NodeList> nodeToRemove) {
+void Herd::removeHorse(NodeList* nodeToRemove) {
     if (!nodeToRemove) {
         return;
     }
 
 // איפוס המצביע ב-Horse
 if (auto horse = nodeToRemove->horse) {
-    horse->setNode(std::weak_ptr<NodeList>()); // איפוס ל-weak_ptr ריק
+    horse->setNode(nullptr); // איפוס ל-weak_ptr ריק
 }
 
-// עדכון הקשרים ברשימה הכפולה
 if (nodeToRemove == head) {
     head = nodeToRemove->next;
     if (head) {
-        head->prev.reset(); // איפוס prev ב-NodeList החדש
+        head->prev=nullptr; // איפוס prev ב-NodeList החדש
     } else {
         tail = nullptr;
     }
 } else if (nodeToRemove == tail) {
-    tail = nodeToRemove->prev.lock();
+    tail = nodeToRemove->prev;
     if (tail) {
         tail->next = nullptr;
     }
 } else {
-    if (auto prev = nodeToRemove->prev.lock()) {
+    if (auto prev = nodeToRemove->prev) {
         prev->next = nodeToRemove->next;
     }
     if (nodeToRemove->next) {
         nodeToRemove->next->prev = nodeToRemove->prev;
     }
 }
+    m_size=m_size-1;
+delete nodeToRemove;
 
-m_size--;
 }
 
 
@@ -118,7 +121,7 @@ m_size--;
 bool Herd::leads (int horseId, int otherHorseId) {
 
     bool found=false;
-    std::shared_ptr<NodeList> cur_node = head;
+    NodeList* cur_node = head;
     std::shared_ptr<Horse> current = nullptr;
     std::shared_ptr<Horse> leader = nullptr;
 
@@ -139,7 +142,7 @@ bool Herd::leads (int horseId, int otherHorseId) {
             break;
         }
 
-        std::shared_ptr<Horse> next = current->getLeader().lock();
+        std::shared_ptr<Horse> next = current-> getLeader();
 
         if(circleCheck==next) {
             break;
@@ -157,12 +160,12 @@ bool Herd::leads (int horseId, int otherHorseId) {
 
 bool Herd::can_run_together() const {
 
-     std::shared_ptr<NodeList> cur_node = head;
-     std::shared_ptr<NodeList> firstRoot=nullptr;
-     std::shared_ptr<NodeList> anotherRoot=nullptr;
+     NodeList* cur_node = head;
+     NodeList* firstRoot=nullptr;
+     NodeList* anotherRoot=nullptr;
 
    while (cur_node) {
-        std::shared_ptr<Horse> isLeader = cur_node->horse->getLeader().lock();
+        std::shared_ptr<Horse> isLeader = cur_node->horse->getLeader();
 
         if (!cur_node->horse->isFollow(isLeader)) {
             if (firstRoot == nullptr) {
@@ -196,7 +199,7 @@ bool Herd::hasCycle() const {
         throw;
     }
 
-     std::shared_ptr<NodeList> cur_node = head;
+     NodeList* cur_node = head;
 
     while (cur_node) {
         std::shared_ptr<Horse> cur_horse = cur_node->horse;
@@ -208,7 +211,7 @@ bool Herd::hasCycle() const {
 
         while ( cur_horse ) {
 
-            std::shared_ptr<Horse> next = cur_horse->getLeader().lock();
+            std::shared_ptr<Horse> next = cur_horse->getLeader();
 
             if(next && next == cur_node->horse) {
                 delete[] visited;
@@ -251,14 +254,14 @@ Herd& Herd::operator=(const Herd& other) {
     m_id = other.m_id;
 
     while (head) {
-         std::shared_ptr<NodeList> cur_node = head;
+         NodeList* cur_node = head;
         head = head->next;
     }
 
     tail = nullptr;
     m_size = SIZE0;
 
-     std::shared_ptr<NodeList> cur_other = other.head;
+    NodeList* cur_other = other.head;
     while (cur_other) {
         addHorse(cur_other->horse); // Reuse the addHorse method
         cur_other = cur_other->next;
@@ -271,7 +274,7 @@ Herd& Herd::operator=(const Herd& other) {
 }
 
 void Herd::printList() const {
-     std::shared_ptr<NodeList> current = head;
+     NodeList* current = head;
     std::cout << "Herd ID: " << m_id << " | Size: " << m_size << " | Horses: ";
 
     // מעבר על הרשימה והדפסת כל סוס
@@ -283,7 +286,6 @@ void Herd::printList() const {
     }
     std::cout << std::endl;
 }
-
 
 
 
