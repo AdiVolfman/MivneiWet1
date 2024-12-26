@@ -7,12 +7,12 @@ long Horse::keyCounter = START_KEY;
 long Horse::horseCounter = START_COUNT;
 
 Horse::Horse( unsigned int id , int speed )
-    : m_id(id), m_speed(speed), m_key(START_KEY) ,m_circleCheck(START_CIRCLE_CHECK), m_leaderKey(START_KEY) {
+    : m_id(id), m_speed(speed),m_leadsRoot(false), m_key(START_KEY) ,m_circleCheck(START_CIRCLE_CHECK), m_leaderKey(START_KEY) {
     m_myCount = horseCounter;
     horseCounter++;
 }
 
-Horse::Horse(): m_id(0), m_speed(0),
+Horse::Horse(): m_id(0), m_speed(0),m_leadsRoot(false),
           m_key(START_KEY), m_leaderKey(START_KEY),m_circleCheck(START_CIRCLE_CHECK), m_myCount(horseCounter) {
      horseCounter++;
 }
@@ -44,6 +44,13 @@ std::shared_ptr<Herd> Horse::getHerd() const {
     return m_node.lock();
 }
 
+bool Horse::isLeadsToRoot() const {
+    return m_leadsRoot;
+}
+
+void Horse::setLeadsToRoot(bool answer) {
+    m_leadsRoot=answer;
+}
 
 void Horse::setCircleCheck(long newCircleCheck) {
 
