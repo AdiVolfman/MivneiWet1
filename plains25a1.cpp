@@ -43,15 +43,14 @@ StatusType Plains::add_herd(int herdId) {
     if ((herdTree->find(herdId)) != nullptr) {
         return StatusType::FAILURE;
     }
-    Herd *h = nullptr;
     try {
-        h = new Herd(herdId);
+        // Directly create shared_ptr without using raw pointer
+        std::shared_ptr<Herd> sharedPtr = std::make_shared<Herd>(herdId);
+        emptyHerdTree->insert(herdId, sharedPtr);
     }
     catch (std::bad_alloc &e) {
         return StatusType::FAILURE;
     }
-    std::shared_ptr<Herd> sharedPtr = std::make_shared<Herd>(*h);
-    emptyHerdTree->insert(herdId, sharedPtr);
     return StatusType::SUCCESS;
 }
 
@@ -74,15 +73,15 @@ StatusType Plains::add_horse(int horseId, int speed) {
     if (horseTree->find(horseId)) {
         return StatusType::FAILURE;
     }
-    Horse *h;
     try {
-        h = new Horse(horseId, speed);
+        // Directly create shared_ptr without using raw pointer
+        std::shared_ptr<Horse> sharedPtr = std::make_shared<Horse>(horseId,
+                                                                   speed);
+        horseTree->insert(horseId, sharedPtr);
     }
     catch (std::bad_alloc &e) {
         return StatusType::ALLOCATION_ERROR;
     }
-    std::shared_ptr<Horse> sharedP = make_shared<Horse>(*h);
-    horseTree->insert(horseId, sharedP);
     return StatusType::SUCCESS;
 }
 
