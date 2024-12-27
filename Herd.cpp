@@ -192,6 +192,9 @@ bool Herd::can_run_together( long circleCheck ) const {
     while (cur_node) {
         std::shared_ptr<Horse> isLeader = cur_node->horse->getLeader();
 
+        if(m_size == 1) {
+            return true;
+        }
         if (!isLeader || !cur_node->horse->isFollow(isLeader)) {
             if (firstRoot == nullptr) {
                 firstRoot = cur_node;
@@ -226,7 +229,7 @@ bool Herd::can_run_together( long circleCheck ) const {
         }
 
 
-        while ( cur_horse && cur_horse != root ) {
+        while (  cur_horse != root ) {
 
             std::shared_ptr<Horse> next = cur_horse->getLeader();
 
@@ -235,7 +238,7 @@ bool Herd::can_run_together( long circleCheck ) const {
             }
 
             if ( cur_horse->getCircleCheck() == circleCheck ) {
-                answer=false;
+                answer = false;
                 break;
             }
 
@@ -245,20 +248,20 @@ bool Herd::can_run_together( long circleCheck ) const {
             }
 
             if (next && next == cur_node->horse && cur_horse->isFollow(next)) {
-                answer=false;
+                answer = false;
                 break;
             }
 
             if (next &&  cur_horse->isFollow(next) && next->isFollow(cur_horse)){
-                answer=false;
+                answer = false;
                 break;
             }
 
-            cur_horse->setCircleCheck(circleCheck);
+            cur_horse-> setCircleCheck(circleCheck);
             cur_horse = next;
         }
         if( answer ) {
-           while (copy_horse) {
+           while (copy_horse && copy_horse != root) {
                 if(copy_horse->isLeadsToRoot()) {
                     break;
                 }
