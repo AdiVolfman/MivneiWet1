@@ -1,4 +1,4 @@
-#pragma once
+
 
 #include <memory>
 #include <iostream>
@@ -178,7 +178,7 @@ Node<T> *AVLTree<T>::insert(Node<T> *node,
                             std::shared_ptr<T> val) {//only if horse isn't already in tree, recursive function
     if (node == nullptr) {
         try {
-            return new Node(key, val); // Attempt to allocate memory
+            return new Node<T>(key, val); // Attempt to allocate memory
         } catch (const std::bad_alloc &e) { // Catch allocation error
             throw std::bad_alloc();
         }

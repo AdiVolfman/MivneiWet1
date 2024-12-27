@@ -22,13 +22,13 @@ private:
     AVLTree<Horse> *horseTree;
     AVLTree<Herd> *herdTree;
     AVLTree<Herd> *emptyHerdTree;
-    static long circleCheck ;
+    static long circleCheck;
 
 public:
     // <DO-NOT-MODIFY> {
     Plains();
 
-    ~Plains() = default;
+    ~Plains();
 
     StatusType add_herd(int herdId);
 
