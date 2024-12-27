@@ -115,7 +115,7 @@ void Herd::removeHorse(std::shared_ptr<NodeList> nodeToRemove) {
 }
 
 
-bool Herd::leads(int horseId, int otherHorseId , long circleCheck ) {
+ bool Herd::leads(int horseId, int otherHorseId , long circleCheck ) {
     bool found = false;
     std::shared_ptr<NodeList> cur_node = head;
     std::shared_ptr<Horse> current = nullptr;
@@ -153,7 +153,7 @@ bool Herd::leads(int horseId, int otherHorseId , long circleCheck ) {
     }
     return found;
 }
-
+/*
 bool Herd::can_run_together( long circleCheck ) const {
     std::shared_ptr<NodeList> cur_node = head;
     std::shared_ptr<NodeList> firstRoot = nullptr;
@@ -183,6 +183,106 @@ bool Herd::can_run_together( long circleCheck ) const {
     return true;
 }
 
+*/
+bool Herd::can_run_together( long circleCheck ) const {
+    std::shared_ptr<NodeList> cur_node = head;
+    std::shared_ptr<NodeList> firstRoot = nullptr;
+    std::shared_ptr<NodeList> anotherRoot = nullptr;
+
+    while (cur_node) {
+        std::shared_ptr<Horse> isLeader = cur_node->horse->getLeader();
+
+        if (!isLeader || !cur_node->horse->isFollow(isLeader)) {
+            if (firstRoot == nullptr) {
+                firstRoot = cur_node;
+            } else {
+                anotherRoot = cur_node;
+            }
+        }
+        cur_node = cur_node->next;
+    }
+
+    if (firstRoot == nullptr || anotherRoot != nullptr) {
+        return false;
+    }
+
+    //////////////////////////////
+
+
+    std::shared_ptr<Horse> root = firstRoot->horse;
+    bool answer = true ;
+
+     cur_node = head;
+
+    while (cur_node) {
+        std::shared_ptr<Horse> cur_horse = cur_node->horse;
+        std::shared_ptr<Horse> copy_horse = cur_horse;
+
+        answer=true;
+
+        if ( cur_horse->isLeadsToRoot() ) {
+            cur_node = cur_node->next;
+            continue;
+        }
+
+
+        while ( cur_horse && cur_horse != root ) {
+
+            std::shared_ptr<Horse> next = cur_horse->getLeader();
+
+            if ( cur_horse->getCircleCheck() == circleCheck && cur_horse->isLeadsToRoot()) {
+                break;
+            }
+
+            if ( cur_horse->getCircleCheck() == circleCheck ) {
+                answer=false;
+                break;
+            }
+
+            if (cur_horse->isFollow(cur_node->horse)) {
+                answer = false;
+                break;
+            }
+
+            if (next && next == cur_node->horse && cur_horse->isFollow(next)) {
+                answer=false;
+                break;
+            }
+
+            if (next &&  cur_horse->isFollow(next) && next->isFollow(cur_horse)){
+                answer=false;
+                break;
+            }
+
+            cur_horse->setCircleCheck(circleCheck);
+            cur_horse = next;
+        }
+        if( answer ) {
+           while (copy_horse) {
+                if(copy_horse->isLeadsToRoot()) {
+                    break;
+                }
+                copy_horse->setLeadsToRoot(true);
+                copy_horse = copy_horse->getLeader();
+            }
+
+        } else {
+            break;
+        }
+        cur_node = cur_node->next;
+    }
+
+    cur_node = head;
+
+    while (cur_node) {
+        cur_node->horse->setLeadsToRoot(false);
+        cur_node=cur_node->next;
+    }
+
+    return answer;
+}
+
+/*
 
 bool Herd::hasCycle( long circleCheck ) const {
 
@@ -250,4 +350,4 @@ void Herd::printList() const {
 }
 
 
-
+*/

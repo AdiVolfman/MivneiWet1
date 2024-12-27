@@ -23,6 +23,7 @@ private:
     int m_leaderKey;
     int m_myCount;
     long m_circleCheck ;
+    bool m_leadsRoot;
     static long keyCounter ;
     static long horseCounter ;
 
@@ -62,6 +63,10 @@ public:
     int getkeyCounter() const;
 
     int getLeaderKey() const;
+
+    bool isLeadsToRoot()const;
+
+    void setLeadsToRoot(bool answer);
 
     void setCircleCheck(long newCircleCheck);
 

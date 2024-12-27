@@ -240,7 +240,8 @@ output_t<bool> Plains::leads(int horseId, int otherHorseId) {
     if(!common_herd) {
         return false;
     }
-    return common_herd->leads(horseId, otherHorseId,circleCheck++);
+    circleCheck++;
+    return common_herd->leads(horseId, otherHorseId,circleCheck);
 }
 
 output_t<bool> Plains::can_run_together(int herdId) {
@@ -258,27 +259,11 @@ output_t<bool> Plains::can_run_together(int herdId) {
 
     bool answer;
     try {
-        answer = found_herd->can_run_together( circleCheck++ );
+        circleCheck++;
+        answer = found_herd->can_run_together( circleCheck );
         return answer;
     }
     catch (std::bad_alloc &e) {
         return StatusType::FAILURE;
     }
-}
-
-output_t<int> Plains::print_herd(int herdId) {
-
-    //find horse
-    //apply get speed
-
-    if (herdId <= 0) {
-        return StatusType::INVALID_INPUT;
-    }
-    std::shared_ptr<Herd> found_herd = herdTree->find(herdId);
-    if (!found_herd) {
-        return StatusType::FAILURE;
-    }
-
-    found_herd->printList();
-    return StatusType::SUCCESS;
 }

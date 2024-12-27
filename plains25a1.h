@@ -49,7 +49,6 @@ public:
     output_t<bool> can_run_together(int herdId);
     // } </DO-NOT-MODIFY>
 
-    output_t<int> print_herd(int herdId);
 };
 
 #endif // PLAINS25WINTER_WET1_H_
