@@ -15,7 +15,6 @@ struct Node {
 
     explicit Node(int key, std::shared_ptr<T> val);
     ~Node();
-    /*Node<T> &operator=(const Node<T> &other);*/
     template<typename U>
     friend std::ostream &operator<<(std::ostream &os, const Node<U> &node);
 };
@@ -33,8 +32,8 @@ private:
     Node<T> *find(Node<T> *node, int key);
     Node<T> *smallestNode(Node<T> *node);
     int getBalanceFactor(Node<T> *node);
-    void inOrder(Node<T> *node);
-    void preOrder(Node<T> *node);
+    //void inOrder(Node<T> *node); functions used for checks
+    //void preOrder(Node<T> *node);
 
 
     Node<T> *LLrotation(Node<T> *node);
@@ -48,9 +47,9 @@ public:
     void insert(int key, std::shared_ptr<T> val);
     void remove(int key);
     shared_ptr<T> find(int key);
-    void printInOrder();
-    void printPreOrder();
     ~AVLTree();
+    //void printInOrder();
+    //void printPreOrder();
 };
 
 
@@ -83,22 +82,15 @@ std::ostream &operator<<(std::ostream &os, const Node<T> &node) {
     return os;
 }
 
-/*template<typename T>
-Node<T> &Node<T>::operator=(const Node<T> &other) {
-    if (this != &other) {
-        key = other.key;
-        left = other.left;   // Shallow copy of pointers (careful with ownership)
-        right = other.right; // Shallow copy of pointers
-        height = other.height;
-    }
-    return *this;
-}*/
+
 template<typename T>
+//returns the root of the tree
 Node<T> *AVLTree<T>::getRoot() const {
     return this->root;
 }
 
 template<typename T>
+//returns the height of the tree
 int AVLTree<T>::getHeight(Node<T> *node) {
     if (node == nullptr) {
         return 0;
@@ -114,6 +106,7 @@ int AVLTree<T>::getBalanceFactor(Node<T> *node) {
 }
 
 template<typename T>
+//returns the child node with the smallest key
 Node<T> *AVLTree<T>::smallestNode(Node<T> *node) {
     Node<T> *curr = node;
     while (curr->left != nullptr) {//inorder
@@ -298,31 +291,32 @@ template<typename T>
 void AVLTree<T>::remove(int key) {
     this->root = remove(this->root, key);
 }
-
-template<typename T>
-void AVLTree<T>::inOrder(Node<T> *node) {
-    if (!node) { return; }
-    inOrder(node->left);
-    cout << node->key << " ";
-    inOrder(node->right);
-}
-
-template<typename T>
-void AVLTree<T>::printInOrder() {
-    inOrder(this->root);
-    cout << endl;
-}
-
-template<typename T>
-void AVLTree<T>::preOrder(Node<T> *node) {
-    if (!node) { return; }
-    cout << node->key << " ";
-    preOrder(node->left);
-    preOrder(node->right);
-}
-
-template<typename T>
-void AVLTree<T>::printPreOrder() {
-    preOrder(this->root);
-    cout << endl;
-}
+//printing functions used for checks
+//===================================
+//template<typename T>
+//void AVLTree<T>::inOrder(Node<T> *node) {
+//    if (!node) { return; }
+//    inOrder(node->left);
+//    cout << node->key << " ";
+//    inOrder(node->right);
+//}
+//
+//template<typename T>
+//void AVLTree<T>::printInOrder() {
+//    inOrder(this->root);
+//    cout << endl;
+//}
+//
+//template<typename T>
+//void AVLTree<T>::preOrder(Node<T> *node) {
+//    if (!node) { return; }
+//    cout << node->key << " ";
+//    preOrder(node->left);
+//    preOrder(node->right);
+//}
+//
+//template<typename T>
+//void AVLTree<T>::printPreOrder() {
+//    preOrder(this->root);
+//    cout << endl;
+//}
