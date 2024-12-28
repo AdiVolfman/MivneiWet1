@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include "Herd.h"
 #define SIZE0 0
@@ -46,36 +45,6 @@ void Herd::addHorse(const std::shared_ptr<Herd> &herd, std::shared_ptr<Horse> &h
     horse->join_herd(herd, new_HorseNode);
 }
 
-/*
-void Herd::removeHorse(unsigned int horseId) {
-    NodeList* cur_node = head;
-    NodeList* pre_node = nullptr;
-
-    while (cur_node) {
-        if (cur_node->horse && cur_node->horse->getId() == horseId) {
-            if (pre_node) {
-                pre_node->next = cur_node->next;
-                if (cur_node->next) {
-                    cur_node->next->prev = pre_node;
-                }
-            } else {
-                head = cur_node->next;
-                if (head) {
-                    head->prev = nullptr;
-                }
-            }
-            if (cur_node == tail) {
-                tail = pre_node;
-            }
-            delete cur_node;
-            m_size--;
-            return;
-        }
-        pre_node = cur_node;
-        cur_node = cur_node->next;
-    }
-}
-*/
 
 void Herd::removeHorse(std::shared_ptr<NodeList> nodeToRemove) {
     if (!nodeToRemove) {
@@ -153,37 +122,7 @@ void Herd::removeHorse(std::shared_ptr<NodeList> nodeToRemove) {
     }
     return found;
 }
-/*
-bool Herd::can_run_together( long circleCheck ) const {
-    std::shared_ptr<NodeList> cur_node = head;
-    std::shared_ptr<NodeList> firstRoot = nullptr;
-    std::shared_ptr<NodeList> anotherRoot = nullptr;
 
-    while (cur_node) {
-        std::shared_ptr<Horse> isLeader = cur_node->horse->getLeader();
-
-        if (!isLeader || !cur_node->horse->isFollow(isLeader)) {
-            if (firstRoot == nullptr) {
-                firstRoot = cur_node;
-            } else {
-                anotherRoot = cur_node;
-            }
-        }
-        cur_node = cur_node->next;
-    }
-
-    if (firstRoot == nullptr || anotherRoot != nullptr) {
-        return false;
-    }
-
-    if (this->hasCycle( circleCheck)) {
-        return false;
-    }
-
-    return true;
-}
-
-*/
 bool Herd::can_run_together( long circleCheck ) const {
     std::shared_ptr<NodeList> cur_node = head;
     std::shared_ptr<NodeList> firstRoot = nullptr;
@@ -208,8 +147,6 @@ bool Herd::can_run_together( long circleCheck ) const {
     if (firstRoot == nullptr || anotherRoot != nullptr) {
         return false;
     }
-
-    //////////////////////////////
 
 
     std::shared_ptr<Horse> root = firstRoot->horse;
@@ -285,72 +222,4 @@ bool Herd::can_run_together( long circleCheck ) const {
     return answer;
 }
 
-/*
 
-bool Herd::hasCycle( long circleCheck ) const {
-
-    std::shared_ptr<NodeList> cur_node = head;
-
-    while (cur_node) {
-        std::shared_ptr<Horse> cur_horse = cur_node->horse;
-
-        if ( cur_horse->getCircleCheck()==circleCheck ) {
-            cur_node = cur_node->next;
-            continue;
-        }
-
-        while ( cur_horse ) {
-            std::shared_ptr<Horse> next = cur_horse->getLeader();
-
-            if (cur_horse->isFollow(cur_node->horse)) {
-               return true;
-            }
-
-            if (next && next == cur_node->horse && cur_horse->isFollow(next)) {
-                return true;
-            }
-            if (next &&  cur_horse->isFollow(next) && next->isFollow(cur_horse)){
-                return true;
-            }
-
-            if ( cur_horse->getCircleCheck() == circleCheck ) {
-                break;
-            }
-
-            cur_horse->setCircleCheck(circleCheck);
-
-            if (next && cur_horse->isFollow(next)) {
-                cur_horse = next;
-            } else {
-                break;
-            }
-        }
-        cur_node = cur_node->next;
-    }
-    return false;
-}
-
-bool Herd::operator<(const Herd &other) const {
-    return m_id < other.m_id;
-}
-
-bool Herd::operator>(const Herd &other) const {
-    return m_id > other.m_id;
-}
-
-void Herd::printList() const {
-    std::shared_ptr<NodeList> current = head;
-    std::cout << "Herd ID: " << m_id << " | Size: " << m_size << " | Horses: ";
-
-    // מעבר על הרשימה והדפסת כל סוס
-    while (current) {
-        if (current->horse) {
-            std::cout << current->horse->getId() << " ";
-        }
-        current = current->next;
-    }
-    std::cout << std::endl;
-}
-
-
-*/

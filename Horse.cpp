@@ -4,17 +4,13 @@
 
 
 long Horse::keyCounter = START_KEY;
-long Horse::horseCounter = START_COUNT;
 
 Horse::Horse( unsigned int id , int speed )
     : m_id(id), m_speed(speed),m_leadsRoot(false), m_key(START_KEY) ,m_circleCheck(START_CIRCLE_CHECK), m_leaderKey(START_KEY) {
-    m_myCount = horseCounter;
-    horseCounter++;
 }
 
 Horse::Horse(): m_id(0), m_speed(0),m_leadsRoot(false),
-          m_key(START_KEY), m_leaderKey(START_KEY),m_circleCheck(START_CIRCLE_CHECK), m_myCount(horseCounter) {
-     horseCounter++;
+          m_key(START_KEY), m_leaderKey(START_KEY),m_circleCheck(START_CIRCLE_CHECK) {
 }
 
 unsigned int Horse::getId() const {
@@ -90,20 +86,8 @@ const std::shared_ptr<Horse> Horse::getLeader() const {
     return m_leader.lock();
 }
 
-int Horse::getKey() const {
+long Horse::getKey() const {
     return m_key;
-}
-
-int Horse::getkeyCounter() const {
-    return keyCounter;
-}
-
- int Horse::getMyCount() const {
-     return m_myCount;
- }
-
-int Horse::getHorseCounter() const {
-    return horseCounter;
 }
 
 void Horse::setKey() {
@@ -113,11 +97,11 @@ void Horse::setKey() {
 
 }
 
-int Horse::getLeaderKey() const {
+long Horse::getLeaderKey() const {
     return m_leaderKey;
 }
 
-void Horse::setLeaderKey(int leaderId) {
+void Horse::setLeaderKey( long leaderId) {
     m_leaderKey = leaderId;
 }
 
