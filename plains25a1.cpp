@@ -40,7 +40,7 @@ StatusType Plains::add_herd(int herdId) {
     if (herdId <= 0) {
         return StatusType::INVALID_INPUT;
     }
-    if ((herdTree->find(herdId)) != nullptr) {
+    if ((herdTree->find(herdId)) != nullptr || emptyHerdTree->find(herdId)) {
         return StatusType::FAILURE;
     }
     try {
@@ -107,12 +107,12 @@ StatusType Plains::join_herd(int horseId, int herdId) {
     }
 
     std::shared_ptr<Herd> found_herd;
-    bool isEmpteyHerd = false;
+    bool isEmptyHerd = false;
 
     if (!herdTree->find(herdId)) {
         if (emptyHerdTree->find(herdId)) {
             found_herd = emptyHerdTree->find(herdId);
-            isEmpteyHerd = true;
+            isEmptyHerd = true;
         } else {
             return StatusType::FAILURE;
         }
@@ -123,7 +123,7 @@ StatusType Plains::join_herd(int horseId, int herdId) {
     try {
         found_herd->addHorse(found_herd, found_horse);
 
-        if (isEmpteyHerd) {
+        if (isEmptyHerd) {
             emptyHerdTree->remove(herdId);
             herdTree->insert(herdId, found_herd);
         }
