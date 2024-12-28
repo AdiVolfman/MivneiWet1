@@ -6,7 +6,6 @@
 #include "Herd.h"
 
 #define START_KEY -1
-#define START_COUNT 1
 #define START_CIRCLE_CHECK 0
 
 class Herd;     // הכרזה מוקדמת על Herd
@@ -19,13 +18,12 @@ private:
     std::weak_ptr<Horse> m_leader;
     std::weak_ptr<Herd> m_herd;
     std::weak_ptr<NodeList> m_node;
-    int m_key;
-    int m_leaderKey;
-    int m_myCount;
+    long m_key;
+    long m_leaderKey;
     long m_circleCheck ;
     bool m_leadsRoot;
     static long keyCounter ;
-    static long horseCounter ;
+
 
 
 
@@ -52,17 +50,11 @@ public:
 
     std::shared_ptr<NodeList>  getNode() const;
 
-    int getKey() const;
+    long getKey() const;
 
     long getCircleCheck() const;
 
-    int getMyCount() const;
-
-    int getHorseCounter() const;
-
-    int getkeyCounter() const;
-
-    int getLeaderKey() const;
+    long getLeaderKey() const;
 
     bool isLeadsToRoot()const;
 
@@ -74,7 +66,7 @@ public:
 
     void leave();
 
-    void setLeaderKey(int leaderId);
+    void setLeaderKey(long leaderId);
 
     bool isFollow (const std::shared_ptr<Horse> &other);
 
